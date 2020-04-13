@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SG.CodeCoverage", "SG.CodeCoverage\SG.CodeCoverage.csproj", "{BFBB1B83-08CD-48FE-9584-966386CA9B2D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SG.CodeCoverage.Recorder", "SG.CodeCoverage.Recorder\SG.CodeCoverage.Recorder.csproj", "{02D49D31-8EB1-472D-9C4E-317A49364C69}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFBB1B83-08CD-48FE-9584-966386CA9B2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFBB1B83-08CD-48FE-9584-966386CA9B2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFBB1B83-08CD-48FE-9584-966386CA9B2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFBB1B83-08CD-48FE-9584-966386CA9B2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02D49D31-8EB1-472D-9C4E-317A49364C69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02D49D31-8EB1-472D-9C4E-317A49364C69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02D49D31-8EB1-472D-9C4E-317A49364C69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02D49D31-8EB1-472D-9C4E-317A49364C69}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6B006F7D-3919-45E5-AF7E-37C161C6BC55}
+	EndGlobalSection
+EndGlobal
