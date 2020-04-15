@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace SG.CodeCoverage.Recorder
 {
-    public class HitsRepository
+    public static class HitsRepository
     {
         private static int[][] TypeMethodsHits = new int[InjectedConstants.TypeCount][];
 
