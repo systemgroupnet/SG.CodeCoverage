@@ -11,7 +11,7 @@ namespace SG.CodeCoverage.Recorder
     public class RecordingControllerServer
     {
         private readonly Dictionary<string, Func<string, string>> _commands;
-        private ILogger _logger;
+        private readonly ILogger _logger;
         private static RecordingControllerServer _instance;
         private Task _listeningTask;
 
