@@ -7,15 +7,15 @@ namespace SG.CodeCoverage.Recorder
     public static class InjectedConstants
     {
         /// <summary>
-        /// Total number of instrumented classes.
+        /// Total number of instrumented types.
         /// The value of this field will be modified by instrumenter.
         /// </summary>
-        public static int ClassCount = 0;
+        public static int TypeCount = 0;
         /// <summary>
         /// The port number that `RecordingControllerServer` will listen on. It will be modified by instrumenter.
         /// </summary>
         public static int ControllerServerPort = 54321;
-        public static string WorkingDirectory = "";
+        public static string WorkingDirectory = string.Empty;
         public static string RecorderLogFileName = "CodeCoverageRecorderLog.txt";
     }
 }

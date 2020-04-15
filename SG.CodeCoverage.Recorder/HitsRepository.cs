@@ -8,7 +8,7 @@ namespace SG.CodeCoverage.Recorder
 {
     public class HitsRepository
     {
-        private static int[][] ClassMethodsHits = new int[InjectedConstants.ClassCount][];
+        private static int[][] TypeMethodsHits = new int[InjectedConstants.TypeCount][];
 
         static HitsRepository()
         {
@@ -16,17 +16,17 @@ namespace SG.CodeCoverage.Recorder
         }
 
         /// <summary>
-        /// Will be called by static constructor of every instrumented class.
+        /// Will be called by static constructor of every instrumented type.
         /// </summary>
-        public static void InitClass(int classIndex, int methodsCount)
+        public static void InitType(int typeIndex, int methodsCount)
         {
-            lock(ClassMethodsHits)
-                ClassMethodsHits[classIndex] = new int[methodsCount];
+            lock(TypeMethodsHits)
+                TypeMethodsHits[typeIndex] = new int[methodsCount];
         }
 
-        public static void AddHit(int classIndex, int methodIndex)
+        public static void AddHit(int typeIndex, int methodIndex)
         {
-            Interlocked.Increment(ref ClassMethodsHits[classIndex][methodIndex]);
+            Interlocked.Increment(ref TypeMethodsHits[typeIndex][methodIndex]);
         }
 
         public static void SaveAndResetHits(string hitsFile)
@@ -37,13 +37,13 @@ namespace SG.CodeCoverage.Recorder
 
         private static int[][] GetAndResetHits()
         {
-            int[][] newHits = new int[InjectedConstants.ClassCount][];
-            var hits = ClassMethodsHits;
-            lock(ClassMethodsHits)
+            int[][] newHits = new int[InjectedConstants.TypeCount][];
+            var hits = TypeMethodsHits;
+            lock(TypeMethodsHits)
             {
-                for (int i = 0; i < InjectedConstants.ClassCount; i++)
+                for (int i = 0; i < InjectedConstants.TypeCount; i++)
                     newHits[i] = new int[hits[i].Length];
-                ClassMethodsHits = newHits;
+                TypeMethodsHits = newHits;
             }
             return hits;
         }
@@ -54,10 +54,10 @@ namespace SG.CodeCoverage.Recorder
             using (var bw = new BinaryWriter(fs))
             {
                 bw.Write(hits.Length);
-                foreach(var classHits in hits)
+                foreach(var typeHits in hits)
                 {
-                    bw.Write(classHits.Length);
-                    foreach (var methodHit in classHits)
+                    bw.Write(typeHits.Length);
+                    foreach (var methodHit in typeHits)
                         bw.Write(methodHit);
                 }
             }
