@@ -35,11 +35,16 @@ namespace SG.CodeCoverage.Instrumentation
         {
             _currentTypeIndex = 0;
 
-            ReaderParameters readerParams = new ReaderParameters()
+            var readerParams = new ReaderParameters()
             {
                 AssemblyResolver = new AssemblyResolver(WorkingDirectory, new ConsoleLogger()),
                 ReadSymbols = true,
                 ReadWrite = true
+            };
+
+            var writerParams = new WriterParameters()
+            {
+                WriteSymbols = true
             };
 
             var assemblyMaps = new List<Map.Assembly>();
@@ -49,6 +54,7 @@ namespace SG.CodeCoverage.Instrumentation
                 var asm = AssemblyDefinition.ReadAssembly(asmFile, readerParams);
                 var assemblyMap = InstrumentAssembly(asm);
                 assemblyMaps.Add(assemblyMap);
+                asm.Write(writerParams);
             }
 
             return assemblyMaps;
