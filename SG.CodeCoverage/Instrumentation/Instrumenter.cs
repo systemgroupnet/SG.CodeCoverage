@@ -114,9 +114,9 @@ namespace SG.CodeCoverage.Instrumentation
             var asm = AssemblyDefinition.ReadAssembly(newPath, _readerParams);
             var constantsType = FindType(asm, nameof(Recorder.InjectedConstants));
             var countField = FindField(constantsType, nameof(Recorder.InjectedConstants.TypesCount));
-            countField.InitialValue = BitConverter.GetBytes(typesCount);
+            countField.Constant = typesCount;
             var portField = FindField(constantsType, nameof(Recorder.InjectedConstants.ControllerServerPort));
-            portField.InitialValue = BitConverter.GetBytes(ControllerPortNumber);
+            portField.Constant = ControllerPortNumber;
             asm.Write(newPath, _writerParams);
         }
 
