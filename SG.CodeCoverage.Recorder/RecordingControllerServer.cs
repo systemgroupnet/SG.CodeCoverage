@@ -45,7 +45,7 @@ namespace SG.CodeCoverage.Recorder
                 }
                 finally { listener.Stop(); }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("RecordingController: Listening failed. Error:\r\n" + ex.ToString());
             }
@@ -87,7 +87,7 @@ namespace SG.CodeCoverage.Recorder
                     result = operation(parameter);
                     _logger.LogVerbose("Command successfully processed.");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     failed = true;
                     result = ex.ToString();

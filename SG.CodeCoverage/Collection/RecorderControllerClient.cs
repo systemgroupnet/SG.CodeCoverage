@@ -33,7 +33,7 @@ namespace SG.CodeCoverage.Collection
                 writer.Flush();
                 result = new BinaryReader(nstream).ReadString().Trim();
             }
-            if(!result.Equals(OkResponse, StringComparison.OrdinalIgnoreCase))
+            if (!result.Equals(OkResponse, StringComparison.OrdinalIgnoreCase))
             {
                 if (result.StartsWith(ErrorResponse, StringComparison.OrdinalIgnoreCase))
                     throw new Exception(

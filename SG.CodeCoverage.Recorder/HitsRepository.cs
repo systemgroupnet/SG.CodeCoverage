@@ -20,7 +20,7 @@ namespace SG.CodeCoverage.Recorder
         /// </summary>
         public static void InitType(int typeIndex, int methodsCount)
         {
-            lock(TypeMethodsHits)
+            lock (TypeMethodsHits)
                 TypeMethodsHits[typeIndex] = new int[methodsCount];
         }
 
@@ -39,7 +39,7 @@ namespace SG.CodeCoverage.Recorder
         {
             int[][] newHits = new int[InjectedConstants.TypesCount][];
             var hits = TypeMethodsHits;
-            lock(TypeMethodsHits)
+            lock (TypeMethodsHits)
             {
                 for (int i = 0; i < InjectedConstants.TypesCount; i++)
                     newHits[i] = new int[hits[i].Length];
@@ -54,7 +54,7 @@ namespace SG.CodeCoverage.Recorder
             using (var bw = new BinaryWriter(fs))
             {
                 bw.Write(hits.Length);
-                foreach(var typeHits in hits)
+                foreach (var typeHits in hits)
                 {
                     bw.Write(typeHits.Length);
                     foreach (var methodHit in typeHits)

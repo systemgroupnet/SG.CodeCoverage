@@ -44,7 +44,7 @@ namespace SG.CodeCoverage.Collection
                         t => t.Methods.ToDictionary(m => m.Index, m => m.Source));
 
                 var typesCount = br.ReadInt32();
-                for (int typeId = 0;  typeId < typesCount; typeId++)
+                for (int typeId = 0; typeId < typesCount; typeId++)
                 {
                     var methodsCount = br.ReadInt32();
                     for (int j = 0; j < methodsCount; j++)

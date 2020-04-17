@@ -122,7 +122,7 @@ namespace SG.CodeCoverage.Instrumentation
             var newPath = Path.Combine(WorkingDirectory, Path.GetFileName(path));
             File.Copy(path, newPath, true);
             File.Copy(Path.ChangeExtension(path, "pdb"), Path.ChangeExtension(newPath, "pdb"));
-            
+
             EditFieldInitializations(newPath, typesCount);
         }
 
@@ -150,10 +150,10 @@ namespace SG.CodeCoverage.Instrumentation
             Mono.Collections.Generic.Collection<Instruction> instructions,
             string fieldName, object value)
         {
-            for(int i = 0; i < instructions.Count; i++)
+            for (int i = 0; i < instructions.Count; i++)
             {
                 var ins = instructions[i];
-                if(ins.OpCode.Code == Code.Stsfld &&
+                if (ins.OpCode.Code == Code.Stsfld &&
                     ins.Operand is FieldDefinition fieldDef &&
                     fieldDef.Name == fieldName)
                 {
@@ -161,7 +161,7 @@ namespace SG.CodeCoverage.Instrumentation
                     if (!valueLoader.OpCode.Name.StartsWith("ld"))
                         throw new Exception("Unexpected instruction.");
                     valueLoader.Operand = value;
-                    switch(value)
+                    switch (value)
                     {
                         case int _:
                             valueLoader.OpCode = OpCodes.Ldc_I4;
