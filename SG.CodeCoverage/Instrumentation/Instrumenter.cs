@@ -123,8 +123,7 @@ namespace SG.CodeCoverage.Instrumentation
         {
             var serializer = new JsonSerializer()
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore
             };
 
             using (var writer = new JsonTextWriter(new StreamWriter(outputFilePath)))

@@ -20,22 +20,29 @@ namespace SG.CodeCoverage.Collection
             HitsFilePath = hitsFilePath;
         }
 
-        public IEnumerable<string> GetVisitedFiles()
+        public HashSet<string> GetVisitedFiles()
         {
             ValidiatePaths();
-            var rawJson = File.ReadAllText(MapFilePath);
-            var assemblies = JsonConvert.DeserializeObject<AssembliesMap>(rawJson);
 
-            var typeIdToSourceMapper = assemblies.Select(asm => asm.Types)
-                .SelectMany(x => x)
-                .ToDictionary(
-                    t => t.Index,
-                    t => t.Methods.ToDictionary(m => m.Index, m => m.Source));
+            var serializer = new JsonSerializer()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
 
             var result = new HashSet<string>();
+
+            using (var reader = new JsonTextReader(new StreamReader(MapFilePath)))
             using (var fs = new FileStream(HitsFilePath, FileMode.Open))
             using (var br = new BinaryReader(fs))
             {
+                var assembliesMap = serializer.Deserialize<AssembliesMap>(reader);
+
+                var typeIdToSourceMapper = assembliesMap.Select(asm => asm.Types)
+                    .SelectMany(x => x)
+                    .ToDictionary(
+                        t => t.Index,
+                        t => t.Methods.ToDictionary(m => m.Index, m => m.Source));
+
                 var typesCount = br.ReadInt32();
                 for (int typeId = 0;  typeId < typesCount; typeId++)
                 {
@@ -44,10 +51,12 @@ namespace SG.CodeCoverage.Collection
                     {
                         var methodId = br.ReadInt32();
                         var source = typeIdToSourceMapper[typeId][methodId];
-                        if (result.Add(source)) yield return source;
+                        result.Add(source);
                     }
                 }
             }
+
+            return result;
         }
 
         public void ValidiatePaths()
