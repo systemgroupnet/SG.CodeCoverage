@@ -8,7 +8,7 @@ namespace SG.CodeCoverage.Recorder
 {
     public static class HitsRepository
     {
-        private static int[][] TypeMethodsHits = new int[InjectedConstants.TypeCount][];
+        private static int[][] TypeMethodsHits = new int[InjectedConstants.TypesCount][];
 
         static HitsRepository()
         {
@@ -37,11 +37,11 @@ namespace SG.CodeCoverage.Recorder
 
         private static int[][] GetAndResetHits()
         {
-            int[][] newHits = new int[InjectedConstants.TypeCount][];
+            int[][] newHits = new int[InjectedConstants.TypesCount][];
             var hits = TypeMethodsHits;
             lock(TypeMethodsHits)
             {
-                for (int i = 0; i < InjectedConstants.TypeCount; i++)
+                for (int i = 0; i < InjectedConstants.TypesCount; i++)
                     newHits[i] = new int[hits[i].Length];
                 TypeMethodsHits = newHits;
             }

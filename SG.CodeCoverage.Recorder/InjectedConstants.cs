@@ -10,7 +10,7 @@ namespace SG.CodeCoverage.Recorder
         /// Total number of instrumented types.
         /// The value of this field will be modified by instrumenter.
         /// </summary>
-        public const int TypeCount = 0;
+        public const int TypesCount = 0;
         /// <summary>
         /// The port number that `RecordingControllerServer` will listen on. It will be modified by instrumenter.
         /// </summary>
