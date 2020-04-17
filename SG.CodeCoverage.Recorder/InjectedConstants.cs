@@ -10,12 +10,12 @@ namespace SG.CodeCoverage.Recorder
         /// Total number of instrumented types.
         /// The value of this field will be modified by instrumenter.
         /// </summary>
-        public const int TypesCount = 0;
+        public static readonly int TypesCount = 0;
         /// <summary>
         /// The port number that `RecordingControllerServer` will listen on. It will be modified by instrumenter.
         /// </summary>
-        public const int ControllerServerPort = 54321;
-        public const string WorkingDirectory = "";
-        public const string RecorderLogFileName = "CodeCoverageRecorderLog.txt";
+        public static readonly int ControllerServerPort = 54321;
+        public static readonly string WorkingDirectory = "";
+        public static readonly string RecorderLogFileName = "CodeCoverageRecorderLog.txt";
     }
 }

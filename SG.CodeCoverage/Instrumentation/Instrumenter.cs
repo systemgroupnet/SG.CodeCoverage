@@ -6,6 +6,7 @@ using Mono.Cecil;
 using SG.CodeCoverage.Common;
 using System.IO;
 using Newtonsoft.Json;
+using Mono.Cecil.Cil;
 
 namespace SG.CodeCoverage.Instrumentation
 {
@@ -110,14 +111,58 @@ namespace SG.CodeCoverage.Instrumentation
             var newPath = Path.Combine(WorkingDirectory, Path.GetFileName(path));
             File.Copy(path, newPath, true);
             File.Copy(Path.ChangeExtension(path, "pdb"), Path.ChangeExtension(newPath, "pdb"));
+            
+            EditFieldInitializations(newPath, typesCount);
+        }
 
-            var asm = AssemblyDefinition.ReadAssembly(newPath, _readerParams);
+        private void EditFieldInitializations(string recorderAsmPath, int typesCount)
+        {
+            var asm = AssemblyDefinition.ReadAssembly(recorderAsmPath, _readerParams);
             var constantsType = FindType(asm, nameof(Recorder.InjectedConstants));
-            var countField = FindField(constantsType, nameof(Recorder.InjectedConstants.TypesCount));
-            countField.Constant = typesCount;
-            var portField = FindField(constantsType, nameof(Recorder.InjectedConstants.ControllerServerPort));
-            portField.Constant = ControllerPortNumber;
+            var cctor = constantsType.Methods.FirstOrDefault(m => m.IsConstructor && m.IsStatic);
+            var instructions = cctor.Body.Instructions;
+
+            ChangeFieldSetterLoadedValue(
+                instructions,
+                nameof(Recorder.InjectedConstants.TypesCount),
+                typesCount);
+
+            ChangeFieldSetterLoadedValue(
+                instructions,
+                nameof(Recorder.InjectedConstants.ControllerServerPort),
+                ControllerPortNumber);
+
             asm.Write(_writerParams);
+        }
+
+        private void ChangeFieldSetterLoadedValue(
+            Mono.Collections.Generic.Collection<Instruction> instructions,
+            string fieldName, object value)
+        {
+            for(int i = 0; i < instructions.Count; i++)
+            {
+                var ins = instructions[i];
+                if(ins.OpCode.Code == Code.Stsfld &&
+                    ins.Operand is FieldDefinition fieldDef &&
+                    fieldDef.Name == fieldName)
+                {
+                    var valueLoader = instructions[i - 1];
+                    if (!valueLoader.OpCode.Name.StartsWith("ld"))
+                        throw new Exception("Unexpected instruction.");
+                    valueLoader.Operand = value;
+                    switch(value)
+                    {
+                        case int _:
+                            valueLoader.OpCode = OpCodes.Ldc_I4;
+                            break;
+                        case string _:
+                            valueLoader.OpCode = OpCodes.Ldstr;
+                            break;
+                        default:
+                            throw new NotSupportedException("Incorrect field type.");
+                    }
+                }
+            }
         }
 
         private void SaveMapFile(IEnumerable<Map.Assembly> assemblyMaps, string outputFilePath)
