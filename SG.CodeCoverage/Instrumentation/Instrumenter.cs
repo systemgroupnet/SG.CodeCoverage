@@ -5,6 +5,7 @@ using System.Linq;
 using Mono.Cecil;
 using SG.CodeCoverage.Common;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace SG.CodeCoverage.Instrumentation
 {
@@ -47,13 +48,21 @@ namespace SG.CodeCoverage.Instrumentation
 
         }
 
-        public IReadOnlyCollection<Map.Assembly> Instrument()
+
+        public void Instrument()
+        {
+            var maps = InstrumentInternal();
+
+            SaveMapFile(maps, OutputMapFilePath);
+        }
+
+        private IReadOnlyCollection<Map.Assembly> InstrumentInternal()
         {
             _currentTypeIndex = 0;
 
             var assemblyMaps = new List<Map.Assembly>();
 
-            foreach(var asmFile in AssemblyFileNames)
+            foreach (var asmFile in AssemblyFileNames)
             {
                 var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams);
                 var assemblyMap = InstrumentAssembly(asm);
@@ -74,7 +83,7 @@ namespace SG.CodeCoverage.Instrumentation
                 Name = assembly.FullName
             };
 
-            foreach(var type in module.GetTypes())
+            foreach (var type in module.GetTypes())
             {
                 var typeMap = InstrumentType(type);
 
@@ -108,6 +117,18 @@ namespace SG.CodeCoverage.Instrumentation
             var portField = FindField(constantsType, nameof(Recorder.InjectedConstants.ControllerServerPort));
             portField.InitialValue = BitConverter.GetBytes(ControllerPortNumber);
             asm.Write(newPath, _writerParams);
+        }
+
+        private void SaveMapFile(IEnumerable<Map.Assembly> assemblyMaps, string outputFilePath)
+        {
+            var serializer = new JsonSerializer()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented,
+            };
+
+            using (var writer = new JsonTextWriter(new StreamWriter(outputFilePath)))
+                serializer.Serialize(writer, assemblyMaps);
         }
 
         private static TypeDefinition FindType(AssemblyDefinition asmDef, string typeName)
