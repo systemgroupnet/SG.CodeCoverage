@@ -11,6 +11,8 @@ namespace SG.CodeCoverage.Instrumentation
     {
         private int _currentTypeIndex;
         private readonly ILogger _logger;
+        private readonly ReaderParameters _readerParams;
+        private readonly WriterParameters _writerParams;
 
         public IReadOnlyCollection<string> AssemblyFileNames { get; }
         public string WorkingDirectory { get; }
@@ -29,32 +31,33 @@ namespace SG.CodeCoverage.Instrumentation
             OutputMapFilePath = outputMapFilePath;
             ControllerPortNumber = controllerPortNumber;
             _logger = logger;
-        }
 
-        public IReadOnlyCollection<Map.Assembly> Instrument()
-        {
-            _currentTypeIndex = 0;
-
-            var readerParams = new ReaderParameters()
+            _readerParams = new ReaderParameters()
             {
                 AssemblyResolver = new AssemblyResolver(WorkingDirectory, _logger),
                 ReadSymbols = true,
                 ReadWrite = true
             };
 
-            var writerParams = new WriterParameters()
+            _writerParams = new WriterParameters()
             {
                 WriteSymbols = true
             };
+
+        }
+
+        public IReadOnlyCollection<Map.Assembly> Instrument()
+        {
+            _currentTypeIndex = 0;
 
             var assemblyMaps = new List<Map.Assembly>();
 
             foreach(var asmFile in AssemblyFileNames)
             {
-                var asm = AssemblyDefinition.ReadAssembly(asmFile, readerParams);
+                var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams);
                 var assemblyMap = InstrumentAssembly(asm);
                 assemblyMaps.Add(assemblyMap);
-                asm.Write(writerParams);
+                asm.Write(_writerParams);
             }
 
             return assemblyMaps;
