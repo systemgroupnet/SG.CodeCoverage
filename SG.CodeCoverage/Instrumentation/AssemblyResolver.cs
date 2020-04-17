@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SG.CodeCoverage.Instrumentation
 {
-    public class AssemblyResolver : BaseAssemblyResolver
+    internal class AssemblyResolver : BaseAssemblyResolver
     {
         private readonly DefaultAssemblyResolver _defaultResolver;
         private readonly string _workingDirectory;
