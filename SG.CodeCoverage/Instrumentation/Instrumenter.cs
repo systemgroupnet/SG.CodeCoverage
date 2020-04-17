@@ -37,7 +37,7 @@ namespace SG.CodeCoverage.Instrumentation
 
             var readerParams = new ReaderParameters()
             {
-                AssemblyResolver = new AssemblyResolver(WorkingDirectory, new ConsoleLogger()),
+                AssemblyResolver = new AssemblyResolver(WorkingDirectory, _logger),
                 ReadSymbols = true,
                 ReadWrite = true
             };
