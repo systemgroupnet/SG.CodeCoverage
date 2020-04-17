@@ -98,6 +98,7 @@ namespace SG.CodeCoverage.Instrumentation
                 _module.ImportReference(typeof(void)));
 
             cctor.Body.GetILProcessor().Emit(OpCodes.Ret);
+            _type.Methods.Add(cctor);
 
             // By defining an explicit static constructor, we may affect the performance of the type.
             // By adding `BeforeFieldInit` flag we maintain previous performance of the type, regarding
