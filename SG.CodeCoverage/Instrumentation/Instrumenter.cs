@@ -49,12 +49,23 @@ namespace SG.CodeCoverage.Instrumentation
 
         }
 
+        public Instrumenter(
+            IReadOnlyCollection<string> assemblyFileNames,
+            string workingDirectory,
+            int controllerPortNumber,
+            ILogger logger)
+            : this(assemblyFileNames, workingDirectory, null, controllerPortNumber, logger)
+        {
+        }
 
-        public void Instrument()
+        public IReadOnlyCollection<Map.Assembly> Instrument()
         {
             var maps = InstrumentInternal();
 
-            SaveMapFile(maps, OutputMapFilePath);
+            if (!string.IsNullOrEmpty(OutputMapFilePath))
+                SaveMapFile(maps, OutputMapFilePath);
+
+            return maps;
         }
 
         private IReadOnlyCollection<Map.Assembly> InstrumentInternal()
