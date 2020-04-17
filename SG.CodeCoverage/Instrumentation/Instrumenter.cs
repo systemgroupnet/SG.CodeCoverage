@@ -117,7 +117,7 @@ namespace SG.CodeCoverage.Instrumentation
             countField.Constant = typesCount;
             var portField = FindField(constantsType, nameof(Recorder.InjectedConstants.ControllerServerPort));
             portField.Constant = ControllerPortNumber;
-            asm.Write(newPath, _writerParams);
+            asm.Write(_writerParams);
         }
 
         private void SaveMapFile(IEnumerable<Map.Assembly> assemblyMaps, string outputFilePath)
