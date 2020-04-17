@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using Mono.Cecil;
 using SG.CodeCoverage.Common;
+using System.IO;
 
 namespace SG.CodeCoverage.Instrumentation
 {
@@ -60,6 +61,8 @@ namespace SG.CodeCoverage.Instrumentation
                 asm.Write(_writerParams);
             }
 
+            CopyAndModifyRecorderAssembly(_currentTypeIndex);
+
             return assemblyMaps;
         }
 
@@ -90,6 +93,31 @@ namespace SG.CodeCoverage.Instrumentation
             }
             var typeIndex = _currentTypeIndex++;
             return new TypeInstrumenter(typeIndex, type, _logger).Instrument();
+        }
+
+        private void CopyAndModifyRecorderAssembly(int typesCount)
+        {
+            var path = typeof(Recorder.HitsRepository).Assembly.Location;
+            var newPath = Path.Combine(WorkingDirectory, Path.GetFileName(path));
+            File.Copy(path, newPath, true);
+
+            var asm = AssemblyDefinition.ReadAssembly(newPath, _readerParams);
+            var constantsType = FindType(asm, nameof(Recorder.InjectedConstants));
+            var countField = FindField(constantsType, nameof(Recorder.InjectedConstants));
+            countField.InitialValue = BitConverter.GetBytes(typesCount);
+            var portField = FindField(constantsType, nameof(Recorder.InjectedConstants.ControllerServerPort));
+            portField.InitialValue = BitConverter.GetBytes(ControllerPortNumber);
+            asm.Write(newPath, _writerParams);
+        }
+
+        private static TypeDefinition FindType(AssemblyDefinition asmDef, string typeName)
+        {
+            return asmDef.MainModule.Types.First(t => t.Name == typeName);
+        }
+
+        private static FieldDefinition FindField(TypeDefinition typeDef, string fieldName)
+        {
+            return typeDef.Fields.First(f => f.Name == fieldName);
         }
     }
 }
