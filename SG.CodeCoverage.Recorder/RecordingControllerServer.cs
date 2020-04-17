@@ -37,6 +37,7 @@ namespace SG.CodeCoverage.Recorder
             {
                 var listener = new TcpListener(IPAddress.Any, port);
                 listener.Start();
+                _logger.LogInformation(nameof(RecordingControllerServer) + ": Started listening on port " + port + ".");
                 try
                 {
                     while (true)
@@ -53,6 +54,7 @@ namespace SG.CodeCoverage.Recorder
         private async Task AcceptAsync(TcpClient client)
         {
             await Task.Yield();
+            _logger.LogInformation("A connection is established.");
             try
             {
                 using (client)
@@ -73,6 +75,7 @@ namespace SG.CodeCoverage.Recorder
 
         private string ProcessCommand(string command)
         {
+            _logger.LogVerbose("Processing command '" + command + "'");
             var (commandName, parameter) = ExtractCommandNameAndParameter(command);
             bool failed = false;
             string result;
@@ -82,6 +85,7 @@ namespace SG.CodeCoverage.Recorder
                 try
                 {
                     result = operation(parameter);
+                    _logger.LogVerbose("Command successfully processed.");
                 }
                 catch(Exception ex)
                 {
