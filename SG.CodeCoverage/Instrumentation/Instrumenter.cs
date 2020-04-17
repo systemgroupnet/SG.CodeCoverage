@@ -109,6 +109,7 @@ namespace SG.CodeCoverage.Instrumentation
             var path = typeof(Recorder.HitsRepository).Assembly.Location;
             var newPath = Path.Combine(WorkingDirectory, Path.GetFileName(path));
             File.Copy(path, newPath, true);
+            File.Copy(Path.ChangeExtension(path, "pdb"), Path.ChangeExtension(newPath, "pdb"));
 
             var asm = AssemblyDefinition.ReadAssembly(newPath, _readerParams);
             var constantsType = FindType(asm, nameof(Recorder.InjectedConstants));
