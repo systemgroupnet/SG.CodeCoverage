@@ -56,9 +56,12 @@ namespace SG.CodeCoverage.Recorder
                 bw.Write(hits.Length);
                 foreach (var typeHits in hits)
                 {
-                    bw.Write(typeHits.Length);
-                    foreach (var methodHit in typeHits)
-                        bw.Write(methodHit);
+                    var length = typeHits?.Length ?? 0;
+                    if (length > 0)
+                    {
+                        foreach (var methodHit in typeHits)
+                            bw.Write(methodHit);
+                    }
                 }
             }
         }
