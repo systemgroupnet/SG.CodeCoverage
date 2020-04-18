@@ -76,10 +76,19 @@ namespace SG.CodeCoverage.Instrumentation
 
             foreach (var asmFile in AssemblyFileNames)
             {
-                var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams);
-                var assemblyMap = InstrumentAssembly(asm);
-                assemblyMaps.Add(assemblyMap);
-                asm.Write(_writerParams);
+                try
+                {
+                    var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams);
+                    var assemblyMap = InstrumentAssembly(asm);
+                    assemblyMaps.Add(assemblyMap);
+                    asm.Write(_writerParams);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogWarning(
+                        $"Error while processing assembly '{asmFile}'. Assembly skipped. The error was:\r\n" +
+                        ex.ToString());
+                }
             }
 
             CopyAndModifyRecorderAssembly(_currentTypeIndex);
