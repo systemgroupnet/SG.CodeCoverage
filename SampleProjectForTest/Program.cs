@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SampleProjectForTest
@@ -17,6 +18,7 @@ namespace SampleProjectForTest
                 Console.WriteLine(s);
             var data = new ClassWithConstructorAndProperties(10, "hello");
             Console.WriteLine(data);
+            Thread.Sleep(10000);
         }
     }
 }
