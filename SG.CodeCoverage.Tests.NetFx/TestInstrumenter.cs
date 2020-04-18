@@ -63,9 +63,9 @@ namespace SG.CodeCoverage.Tests
             var calc = assembly.DefinedTypes.Where(x => x.Name == nameof(PrimeCalculator)).FirstOrDefault();
             var res = calc.GetMethod("IsPrime").Invoke(calc.DeclaredConstructors.First().Invoke(null), new object[] { 7 } );
             var hitFileName = hitsPath("Prime");
-            client.SaveHitsAndReset(hitFileName);
-            var visitedFile = new Collection.DataCollector(mapPath, hitFileName).GetVisitedFiles();
-            File.WriteAllText(Path.Combine(dirPath, "visitedFile"), string.Join(",", visitedFile));
+            //client.SaveHitsAndReset(hitFileName);
+            //var visitedFile = new Collection.DataCollector(mapPath, hitFileName).GetVisitedFiles();
+            //File.WriteAllText(Path.Combine(dirPath, "visitedFile"), string.Join(",", visitedFile));
 
         }
     }

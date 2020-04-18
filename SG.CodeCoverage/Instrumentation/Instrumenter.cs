@@ -114,8 +114,11 @@ namespace SG.CodeCoverage.Instrumentation
                 {
                     using (var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams))
                     {
-                        if(IsAssemblySigned(asm))
+                        if (IsAssemblySigned(asm))
+                        {
                             _logger.LogWarning($"The assembly \"{asm.FullName}\" is signed! Instrumenting signed assemblies is not currently supported. Assembly skipped.");
+                            continue;
+                        }
 
                         var assemblyMap = InstrumentAssembly(asm);
                         assemblyMaps.Add(assemblyMap);
