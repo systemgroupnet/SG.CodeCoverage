@@ -123,7 +123,7 @@ namespace SG.CodeCoverage.Instrumentation
                 {
                     _logger.LogWarning(
                         $"Error while processing assembly '{asmFile}'. Assembly skipped. The error was:\r\n" +
-                        ex.ToString());
+                        ex.Message);
                 }
             }
 
@@ -153,10 +153,8 @@ namespace SG.CodeCoverage.Instrumentation
         private Map.Type InstrumentType(TypeDefinition type)
         {
             if (!type.HasMethods)
-            {
-                _logger.LogVerbose($"Type `{type.FullName}` has no methods. Skipped.");
                 return null;
-            }
+
             var typeIndex = _currentTypeIndex++;
             return new TypeInstrumenter(typeIndex, type, _logger).Instrument();
         }
