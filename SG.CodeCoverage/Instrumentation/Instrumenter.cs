@@ -114,6 +114,9 @@ namespace SG.CodeCoverage.Instrumentation
                 {
                     using (var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams))
                     {
+                        if(IsAssemblySigned(asm))
+                            _logger.LogWarning($"The assembly \"{asm.FullName}\" is signed! Instrumenting signed assemblies is not currently supported. Assembly skipped.");
+
                         var assemblyMap = InstrumentAssembly(asm);
                         assemblyMaps.Add(assemblyMap);
                         asm.Write(_writerParams);
@@ -130,6 +133,12 @@ namespace SG.CodeCoverage.Instrumentation
             CopyAndModifyRecorderAssembly(_currentTypeIndex);
 
             return assemblyMaps;
+        }
+
+        private bool IsAssemblySigned(AssemblyDefinition asmDef)
+        {
+            return asmDef.Name.HasPublicKey || asmDef.Name.PublicKey.Length > 0 ||
+                asmDef.MainModule.Attributes.HasFlag(ModuleAttributes.StrongNameSigned);
         }
 
         private Map.Assembly InstrumentAssembly(AssemblyDefinition assembly)
