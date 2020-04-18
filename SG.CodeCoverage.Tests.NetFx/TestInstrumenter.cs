@@ -5,6 +5,7 @@ using SG.CodeCoverage.Instrumentation;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace SG.CodeCoverage.Tests
@@ -59,10 +60,11 @@ namespace SG.CodeCoverage.Tests
             var client = new Collection.RecorderControllerClient(PortNumber);
             string hitsPath(string testId) => Path.Combine(dirPath, $"{testId}.bin");
             var assembly = Assembly.LoadFrom(asmFilePath);
-            PrimeCalculator calc = (PrimeCalculator)assembly.CreateInstance(nameof(PrimeCalculator));
-            calc.IsPrime(7);
-            client.SaveHitsAndReset(hitsPath("Prime"));
-            var visitedFile = new Collection.DataCollector(mapPath, asmFilePath).GetVisitedFiles();
+            var calc = assembly.DefinedTypes.Where(x => x.Name == nameof(PrimeCalculator)).FirstOrDefault();
+            var res = calc.GetMethod("IsPrime").Invoke(calc.DeclaredConstructors.First().Invoke(null), new object[] { 7 } );
+            var hitFileName = hitsPath("Prime");
+            client.SaveHitsAndReset(hitFileName);
+            var visitedFile = new Collection.DataCollector(mapPath, hitFileName).GetVisitedFiles();
             File.WriteAllText(Path.Combine(dirPath, "visitedFile"), string.Join(",", visitedFile));
 
         }
