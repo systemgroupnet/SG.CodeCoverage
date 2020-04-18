@@ -99,7 +99,8 @@ namespace SG.CodeCoverage.Instrumentation
         {
             var cctor = new MethodDefinition(".cctor",
                 MethodAttributes.Static | MethodAttributes.Private |
-                MethodAttributes.SpecialName | MethodAttributes.HideBySig,
+                MethodAttributes.SpecialName | MethodAttributes.RTSpecialName |
+                MethodAttributes.HideBySig,
                 _module.ImportReference(typeof(void)));
 
             cctor.Body.GetILProcessor().Emit(OpCodes.Ret);
