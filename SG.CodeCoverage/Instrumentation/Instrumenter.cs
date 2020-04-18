@@ -78,10 +78,12 @@ namespace SG.CodeCoverage.Instrumentation
             {
                 try
                 {
-                    var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams);
-                    var assemblyMap = InstrumentAssembly(asm);
-                    assemblyMaps.Add(assemblyMap);
-                    asm.Write(_writerParams);
+                    using (var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams))
+                    {
+                        var assemblyMap = InstrumentAssembly(asm);
+                        assemblyMaps.Add(assemblyMap);
+                        asm.Write(_writerParams);
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -137,22 +139,24 @@ namespace SG.CodeCoverage.Instrumentation
 
         private void EditFieldInitializations(string recorderAsmPath, int typesCount)
         {
-            var asm = AssemblyDefinition.ReadAssembly(recorderAsmPath, _readerParams);
-            var constantsType = FindType(asm, nameof(Recorder.InjectedConstants));
-            var cctor = constantsType.Methods.FirstOrDefault(m => m.IsConstructor && m.IsStatic);
-            var instructions = cctor.Body.Instructions;
+            using (var asm = AssemblyDefinition.ReadAssembly(recorderAsmPath, _readerParams))
+            {
+                var constantsType = FindType(asm, nameof(Recorder.InjectedConstants));
+                var cctor = constantsType.Methods.FirstOrDefault(m => m.IsConstructor && m.IsStatic);
+                var instructions = cctor.Body.Instructions;
 
-            ChangeFieldSetterLoadedValue(
-                instructions,
-                nameof(Recorder.InjectedConstants.TypesCount),
-                typesCount);
+                ChangeFieldSetterLoadedValue(
+                    instructions,
+                    nameof(Recorder.InjectedConstants.TypesCount),
+                    typesCount);
 
-            ChangeFieldSetterLoadedValue(
-                instructions,
-                nameof(Recorder.InjectedConstants.ControllerServerPort),
-                ControllerPortNumber);
+                ChangeFieldSetterLoadedValue(
+                    instructions,
+                    nameof(Recorder.InjectedConstants.ControllerServerPort),
+                    ControllerPortNumber);
 
-            asm.Write(_writerParams);
+                asm.Write(_writerParams);
+            }
         }
 
         private void ChangeFieldSetterLoadedValue(
