@@ -42,7 +42,7 @@ namespace SG.CodeCoverage.Recorder
             lock (TypeMethodsHits)
             {
                 for (int i = 0; i < InjectedConstants.TypesCount; i++)
-                    newHits[i] = new int[hits[i].Length];
+                    newHits[i] = new int[hits[i]?.Length ?? 0];
                 TypeMethodsHits = newHits;
             }
             return hits;
