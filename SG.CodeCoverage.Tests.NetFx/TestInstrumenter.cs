@@ -29,7 +29,7 @@ namespace SG.CodeCoverage.Tests
             File.Copy(origPdbFileName, Path.Combine(tempPath, Path.GetFileName(origPdbFileName)));
 
             Instrumenter instrumenter = new Instrumenter(new[] { assemblyFileName },
-                tempPath, mapFileName, PortNumber, new ConsoleLogger());
+                new[] { tempPath }, tempPath, mapFileName, PortNumber, new ConsoleLogger());
 
             instrumenter.Instrument();
             return assemblyFileName;

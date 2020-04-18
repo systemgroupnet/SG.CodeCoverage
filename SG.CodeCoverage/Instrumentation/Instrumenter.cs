@@ -18,26 +18,45 @@ namespace SG.CodeCoverage.Instrumentation
         private readonly WriterParameters _writerParams;
 
         public IReadOnlyCollection<string> AssemblyFileNames { get; }
-        public string WorkingDirectory { get; }
+        public IReadOnlyCollection<string> AdditionalReferencePaths { get; }
+        public string RecorderAssemblyCopyPath { get; }
         public string OutputMapFilePath { get; }
         public int ControllerPortNumber { get; }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="assemblyFileNames">Path to all the assembly files that should be instrumented.</param>
+        /// <param name="additionalReferencePaths">
+        /// Path to directories containing additional dependencies required by instrumented assemblies.
+        /// </param>
+        /// <param name="recorderAssemblyCopyPath">
+        /// Path to a folder that the modified "SG.CodeCoverage.Recorder.dll" will be copied.
+        /// This folder should be accessible by the system under test. The instrumented assemblies will reference the
+        /// recorder assembly and should be able to load it.
+        /// The system under test should probe this folder for it's dependencies, or the file "SG.CodeCoverage.Recorder.dll"
+        /// should manually copied to somewhere accessible by it.
+        /// </param>
+        /// <param name="outputMapFilePath">The path to the output map file (optional)</param>
+        /// <param name="controllerPortNumber"></param>
+        /// <param name="logger"></param>
         public Instrumenter(
             IReadOnlyCollection<string> assemblyFileNames,
-            string workingDirectory,
+            IReadOnlyCollection<string> additionalReferencePaths,
+            string recorderAssemblyCopyPath,
             string outputMapFilePath,
             int controllerPortNumber,
             ILogger logger)
         {
             AssemblyFileNames = assemblyFileNames.ToList().AsReadOnly();
-            WorkingDirectory = workingDirectory;
+            AdditionalReferencePaths = additionalReferencePaths;
+            RecorderAssemblyCopyPath = recorderAssemblyCopyPath;
             OutputMapFilePath = outputMapFilePath;
             ControllerPortNumber = controllerPortNumber;
             _logger = logger;
 
             _readerParams = new ReaderParameters()
             {
-                AssemblyResolver = new AssemblyResolver(WorkingDirectory, _logger),
+                AssemblyResolver = new AssemblyResolver(AdditionalReferencePaths, _logger),
                 ReadSymbols = true,
                 ReadWrite = true
             };
@@ -46,15 +65,30 @@ namespace SG.CodeCoverage.Instrumentation
             {
                 WriteSymbols = true
             };
-
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="assemblyFileNames">Path to all the assembly files that should be instrumented.</param>
+        /// <param name="additionalReferencePaths">
+        /// Path to directories containing additional dependencies required by instrumented assemblies.
+        /// </param>
+        /// <param name="recorderAssemblyCopyPath">
+        /// Path to a folder that the modified "SG.CodeCoverage.Recorder.dll" will be copied.
+        /// This folder should be accessible by the system under test. The instrumented assemblies will reference the
+        /// recorder assembly and should be able to load it.
+        /// The system under test should probe this folder for it's dependencies, or the file "SG.CodeCoverage.Recorder.dll"
+        /// should manually copied to somewhere accessible by it.
+        /// </param>
+        /// <param name="controllerPortNumber"></param>
+        /// <param name="logger"></param>
         public Instrumenter(
             IReadOnlyCollection<string> assemblyFileNames,
-            string workingDirectory,
+            IReadOnlyCollection<string> additionalReferencePaths,
+            string recorderAssemblyCopyPath,
             int controllerPortNumber,
             ILogger logger)
-            : this(assemblyFileNames, workingDirectory, null, controllerPortNumber, logger)
+            : this(assemblyFileNames, additionalReferencePaths, recorderAssemblyCopyPath, null, controllerPortNumber, logger)
         {
         }
 
@@ -130,7 +164,7 @@ namespace SG.CodeCoverage.Instrumentation
         private void CopyAndModifyRecorderAssembly(int typesCount)
         {
             var path = typeof(Recorder.HitsRepository).Assembly.Location;
-            var newPath = Path.Combine(WorkingDirectory, Path.GetFileName(path));
+            var newPath = Path.Combine(RecorderAssemblyCopyPath, Path.GetFileName(path));
             File.Copy(path, newPath, true);
             File.Copy(Path.ChangeExtension(path, "pdb"), Path.ChangeExtension(newPath, "pdb"));
 

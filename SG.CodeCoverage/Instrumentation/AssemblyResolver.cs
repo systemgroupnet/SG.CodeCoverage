@@ -10,13 +10,13 @@ namespace SG.CodeCoverage.Instrumentation
     internal class AssemblyResolver : BaseAssemblyResolver
     {
         private readonly DefaultAssemblyResolver _defaultResolver;
-        private readonly string _workingDirectory;
+        private readonly IReadOnlyCollection<string> _additionalReferencePaths;
         private readonly ILogger _logger;
 
-        public AssemblyResolver(string workingDirectory, ILogger logger)
+        public AssemblyResolver(IReadOnlyCollection<string> additionalReferencePaths, ILogger logger)
         {
             _defaultResolver = new DefaultAssemblyResolver();
-            _workingDirectory = workingDirectory;
+            _additionalReferencePaths = additionalReferencePaths;
             _logger = logger;
         }
 
@@ -27,13 +27,25 @@ namespace SG.CodeCoverage.Instrumentation
             {
                 return assembly = _defaultResolver.Resolve(name);
             }
-            catch (AssemblyResolutionException ex)
+            catch (AssemblyResolutionException rex)
             {
-                var path = Path.Combine(_workingDirectory, name.Name) + ".dll";
-                if (File.Exists(path))
-                    return AssemblyDefinition.ReadAssembly(path);
+                foreach (var path in _additionalReferencePaths)
+                {
+                    var asmPath = Path.Combine(path, name.Name) + ".dll";
+                    if (File.Exists(asmPath))
+                    {
+                        try
+                        {
+                            return AssemblyDefinition.ReadAssembly(asmPath);
+                        }
+                        catch(Exception ex)
+                        {
+                            _logger.LogWarning($"Found assembly \"{asmPath}\" but was unable to load it: {ex.Message}");
+                        }
+                    }
+                }
 
-                _logger.LogWarning("Could not resolve assembly " + name + ".\r\n" + ex.ToString());
+                _logger.LogWarning("Could not resolve assembly " + name + ".\r\n" + rex.ToString());
                 return null;
             }
         }
