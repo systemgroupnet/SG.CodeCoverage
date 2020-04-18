@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleProjectForTest", "Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SG.CodeCoverage", "SG.CodeCoverage\SG.CodeCoverage.csproj", "{EA4683EB-B40D-463A-A08D-AE5ED4FE6254}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SG.CodeCoverage.Tests.NetFx", "SG.CodeCoverage.Tests.NetFx\SG.CodeCoverage.Tests.NetFx.csproj", "{21FC4418-8A3D-45CA-9F48-9345D194328D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{EA4683EB-B40D-463A-A08D-AE5ED4FE6254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA4683EB-B40D-463A-A08D-AE5ED4FE6254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA4683EB-B40D-463A-A08D-AE5ED4FE6254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21FC4418-8A3D-45CA-9F48-9345D194328D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21FC4418-8A3D-45CA-9F48-9345D194328D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21FC4418-8A3D-45CA-9F48-9345D194328D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21FC4418-8A3D-45CA-9F48-9345D194328D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
