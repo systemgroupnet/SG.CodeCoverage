@@ -3,41 +3,53 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Newtonsoft.Json;
-using AssembliesMap = System.Collections.Generic.IEnumerable<SG.CodeCoverage.Map.Assembly>;
+using AssemblyMaps = System.Collections.Generic.IEnumerable<SG.CodeCoverage.Map.Assembly>;
 using System.Linq;
 
 namespace SG.CodeCoverage.Collection
 {
     public class DataCollector
     {
-        public string MapFilePath { get; }
-
         public string HitsFilePath { get; }
+        private AssemblyMaps _assemblyMaps;
 
         public DataCollector(string mapFilePath, string hitsFilePath)
         {
-            MapFilePath = mapFilePath;
             HitsFilePath = hitsFilePath;
+            _assemblyMaps = LoadMapFile(mapFilePath);
+            ValidateHitsFilePath();
         }
 
-        public HashSet<string> GetVisitedFiles()
+        public DataCollector(AssemblyMaps assemblyMaps, string hitsFilePath)
         {
-            ValidiatePaths();
+            HitsFilePath = hitsFilePath;
+            _assemblyMaps = assemblyMaps;
+            ValidateHitsFilePath();
+        }
+
+        private AssemblyMaps LoadMapFile(string mapFilePath)
+        {
+            if (!File.Exists(mapFilePath))
+                throw new FileNotFoundException("Could not find the map file.");
 
             var serializer = new JsonSerializer()
             {
                 NullValueHandling = NullValueHandling.Ignore
             };
 
+            using (var reader = new JsonTextReader(new StreamReader(mapFilePath)))
+                return serializer.Deserialize<AssemblyMaps>(reader);
+        }
+
+        public HashSet<string> GetVisitedFiles()
+        {
             var result = new HashSet<string>();
 
-            using (var reader = new JsonTextReader(new StreamReader(MapFilePath)))
             using (var fs = new FileStream(HitsFilePath, FileMode.Open))
             using (var br = new BinaryReader(fs))
             {
-                var assembliesMap = serializer.Deserialize<AssembliesMap>(reader);
 
-                var typeIdToSourceMapper = assembliesMap.Select(asm => asm.Types)
+                var typeIdToSourceMapper = _assemblyMaps.Select(asm => asm.Types)
                     .SelectMany(x => x)
                     .ToDictionary(
                         t => t.Index,
@@ -59,11 +71,8 @@ namespace SG.CodeCoverage.Collection
             return result;
         }
 
-        public void ValidiatePaths()
+        public void ValidateHitsFilePath()
         {
-            if (!File.Exists(MapFilePath))
-                throw new FileNotFoundException("Could not find the map file.");
-
             if (!File.Exists(HitsFilePath))
                 throw new FileNotFoundException("Could not find the hits file.");
         }
