@@ -58,10 +58,8 @@ namespace SG.CodeCoverage.Instrumentation
                 return null;
             var debugInformation = method.DebugInformation;
             if (debugInformation == null || !debugInformation.HasSequencePoints)
-            {
-                _logger.LogWarning($"Method `{method.FullName}` in type `{_type.FullName}` has no debug information. Skipped.");
                 return null;
-            }
+
             var sourceFile = debugInformation.SequencePoints.Select(s => s.Document.Url).FirstOrDefault();
             var startLine = debugInformation.SequencePoints[0].StartLine;
 
