@@ -80,7 +80,7 @@ namespace SG.CodeCoverage.Recorder
             bool failed = false;
             string result;
 
-            if (_commands.TryGetValue(command.ToLower(), out var operation))
+            if (_commands.TryGetValue(commandName.ToLower(), out var operation))
             {
                 try
                 {
