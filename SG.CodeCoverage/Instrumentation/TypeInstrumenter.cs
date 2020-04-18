@@ -13,7 +13,9 @@ namespace SG.CodeCoverage.Instrumentation
         private readonly int _index;
         private readonly TypeDefinition _type;
         private readonly ModuleDefinition _module;
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly ILogger _logger;
+#pragma warning restore IDE0052 // Remove unread private members
         private int _currentMethodIndex;
         private readonly MethodReference _addHitMethodRef;
 
