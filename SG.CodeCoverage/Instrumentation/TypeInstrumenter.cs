@@ -85,6 +85,11 @@ namespace SG.CodeCoverage.Instrumentation
             if (cctor == null)
                 cctor = CreateCCtor();
 
+            // We need to remove this flag, so we can be sure that the type will be initialized
+            // before it's first use (i.e. it's static constructor is called before any method
+            // of the type is used).
+            _type.IsBeforeFieldInit = false;
+
             var initTypeMethod = new Action<int, int>(Recorder.HitsRepository.InitType).Method;
             var initTypeMethodRef = _module.ImportReference(initTypeMethod);
             InjectCall(cctor.Body, initTypeMethodRef, _index, totalMethods);
