@@ -59,11 +59,14 @@ namespace SG.CodeCoverage.Collection
                 for (int typeId = 0; typeId < typesCount; typeId++)
                 {
                     var methodsCount = br.ReadInt32();
-                    for (int j = 0; j < methodsCount; j++)
+                    for (int methodId = 0; methodId < methodsCount; methodId++)
                     {
-                        var methodId = br.ReadInt32();
-                        var source = typeIdToSourceMapper[typeId][methodId];
-                        result.Add(source);
+                        var hitCount = br.ReadInt32();
+                        if (hitCount > 0)
+                        {
+                            var source = typeIdToSourceMapper[typeId][methodId];
+                            result.Add(source);
+                        }
                     }
                 }
             }
