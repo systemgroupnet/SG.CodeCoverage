@@ -33,7 +33,12 @@ namespace SG.CodeCoverage.Tests
             File.Copy(origPdbFileName, Path.Combine(tempPath, Path.GetFileName(origPdbFileName)));
 
             Instrumenter instrumenter = new Instrumenter(new[] { assemblyFileName },
-                new[] { tempPath }, tempPath, mapFileName, PortNumber, new ConsoleLogger());
+                new[] { tempPath }, tempPath, mapFileName, PortNumber, new ConsoleLogger())
+            {
+                BackupFolder = Path.Combine(tempPath, "backup")
+            };
+
+            Directory.CreateDirectory(instrumenter.BackupFolder);
 
             instrumenter.Instrument();
             return (assemblyFileName, mapFileName);
