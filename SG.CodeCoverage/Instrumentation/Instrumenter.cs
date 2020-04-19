@@ -176,7 +176,7 @@ namespace SG.CodeCoverage.Instrumentation
             var path = typeof(Recorder.HitsRepository).Assembly.Location;
             var newPath = Path.Combine(RecorderAssemblyCopyPath, Path.GetFileName(path));
             File.Copy(path, newPath, true);
-            File.Copy(Path.ChangeExtension(path, "pdb"), Path.ChangeExtension(newPath, "pdb"));
+            File.Copy(Path.ChangeExtension(path, "pdb"), Path.ChangeExtension(newPath, "pdb"), true);
 
             EditFieldInitializations(newPath, typesCount);
         }
