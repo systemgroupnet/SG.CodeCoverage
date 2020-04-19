@@ -22,6 +22,7 @@ namespace SG.CodeCoverage.Instrumentation
         public string RecorderAssemblyCopyPath { get; }
         public string OutputMapFilePath { get; }
         public int ControllerPortNumber { get; }
+        public string BackupFolder { get; set; }
 
         /// <summary>
         /// </summary>
@@ -120,6 +121,8 @@ namespace SG.CodeCoverage.Instrumentation
                             continue;
                         }
 
+                        BackupIfFolderProvided(asmFile);
+
                         var assemblyMap = InstrumentAssembly(asm);
                         assemblyMaps.Add(assemblyMap);
                         asm.Write(_writerParams);
@@ -136,6 +139,15 @@ namespace SG.CodeCoverage.Instrumentation
             CopyAndModifyRecorderAssembly(_currentTypeIndex);
 
             return assemblyMaps;
+        }
+
+        private void BackupIfFolderProvided(string asmFile)
+        {
+            if (!string.IsNullOrEmpty(BackupFolder))
+            {
+                File.Copy(asmFile, Path.Combine(BackupFolder, Path.GetFileName(asmFile)), true);
+                File.Copy(GetPdbFileName(asmFile), GetPdbFileName(Path.Combine(BackupFolder, Path.GetFileName(asmFile))), true);
+            }
         }
 
         private bool IsAssemblySigned(AssemblyDefinition asmDef)
@@ -176,7 +188,7 @@ namespace SG.CodeCoverage.Instrumentation
             var path = typeof(Recorder.HitsRepository).Assembly.Location;
             var newPath = Path.Combine(RecorderAssemblyCopyPath, Path.GetFileName(path));
             File.Copy(path, newPath, true);
-            File.Copy(Path.ChangeExtension(path, "pdb"), Path.ChangeExtension(newPath, "pdb"), true);
+            File.Copy(GetPdbFileName(path), GetPdbFileName(newPath), true);
 
             EditFieldInitializations(newPath, typesCount);
         }
@@ -252,6 +264,11 @@ namespace SG.CodeCoverage.Instrumentation
         private static FieldDefinition FindField(TypeDefinition typeDef, string fieldName)
         {
             return typeDef.Fields.First(f => f.Name == fieldName);
+        }
+
+        private string GetPdbFileName(string assemblyFile)
+        {
+            return Path.ChangeExtension(assemblyFile, "pdb");
         }
     }
 }
