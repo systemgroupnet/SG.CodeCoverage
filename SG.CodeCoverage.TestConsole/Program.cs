@@ -11,7 +11,11 @@ namespace SG.CodeCoverage.TestConsole
     {
         static void Main(string[] args)
         {
-            new TestInstrumenter().TestSampleProjectInstrumented();
+            var tester = new InstrumenterTester();
+            tester.InstrumentSampleProject();
+            tester.InvokeSumTypes();
+            var visitedFiles = tester.GetVisitedFiles();
+            Console.WriteLine(visitedFiles.Count);
         }
     }
 }
