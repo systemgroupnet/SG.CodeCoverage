@@ -27,7 +27,7 @@ namespace SG.CodeCoverage.Collection
             ValidateHitsFilePath();
         }
 
-        private AssemblyMaps LoadMapFile(string mapFilePath)
+        public static AssemblyMaps LoadMapFile(string mapFilePath)
         {
             if (!File.Exists(mapFilePath))
                 throw new FileNotFoundException("Could not find the map file.");
