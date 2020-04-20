@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -63,10 +64,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SG.CodeCoverage.Recorder\SG.CodeCoverage.Recorder.csproj">
-      <Project>{02d49d31-8eb1-472d-9c4e-317a49364c69}</Project>
-      <Name>SG.CodeCoverage.Recorder</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SG.CodeCoverage.Tests.NetFx\SG.CodeCoverage.Tests.NetFx.csproj">
       <Project>{21fc4418-8a3d-45ca-9f48-9345d194328d}</Project>
       <Name>SG.CodeCoverage.Tests.NetFx</Name>
