@@ -74,6 +74,7 @@ namespace SG.CodeCoverage.Instrumentation
                 StartLine = startLine
             };
 
+            RemoveAllCalls(methodBody, _addHitMethodRef);
             InjectCall(methodBody, _addHitMethodRef, _index, methodIndex);
 
             return methodMap;
@@ -92,6 +93,7 @@ namespace SG.CodeCoverage.Instrumentation
 
             var initTypeMethod = new Action<int, int>(Recorder.HitsRepository.InitType).Method;
             var initTypeMethodRef = _module.ImportReference(initTypeMethod);
+            RemoveAllCalls(cctor.Body, initTypeMethodRef);
             InjectCall(cctor.Body, initTypeMethodRef, _index, totalMethods);
         }
 
@@ -116,6 +118,41 @@ namespace SG.CodeCoverage.Instrumentation
             ilProcessor.InsertBefore(firstInstruction, ilProcessor.Create(OpCodes.Ldc_I4, param1));
             ilProcessor.InsertBefore(firstInstruction, ilProcessor.Create(OpCodes.Ldc_I4, param2));
             ilProcessor.InsertBefore(firstInstruction, ilProcessor.Create(OpCodes.Call, methodToCall));
+        }
+
+        private void RemoveAllCalls(MethodBody body, MethodReference methodToRemove)
+        {
+            var intName = typeof(int).Name;
+            if(
+                methodToRemove.Parameters.Count != 2 ||
+                methodToRemove.Parameters[0].ParameterType.Name != intName ||
+                methodToRemove.Parameters[1].ParameterType.Name != intName)
+            {
+                throw new Exception("The method does not match the expected signature. We are only interested in methods with `void (int, int)` signature.");
+            }
+
+            var instructions = body.Instructions.ToList();
+            for(int i = 0; i < instructions.Count; i++)
+            {
+                var ins = instructions[i];
+                if(
+                    ins.OpCode.Code == Code.Call &&
+                    ins.Operand is MethodReference mr &&
+                    mr.FullName == methodToRemove.FullName)
+                {
+                    Instruction ip1, ip2;
+                    if (
+                        i < 2 ||
+                        (ip1 = instructions[i - 1]).OpCode.Code != Code.Ldc_I4 ||
+                        (ip2 = instructions[i - 2]).OpCode.Code != Code.Ldc_I4)
+                        throw new Exception("Invalid opcodes for method parameters.");
+                    var ilProcessor = body.GetILProcessor();
+                    ilProcessor.Remove(ip1);
+                    ilProcessor.Remove(ip2);
+                    ilProcessor.Remove(ins);
+                    return;
+                }
+            }
         }
     }
 }
