@@ -27,7 +27,7 @@ namespace SG.CodeCoverage.Collection
             ValidateHitsFilePath();
         }
 
-        public static AssemblyMaps LoadMapFile(string mapFilePath)
+        public static IReadOnlyList<Map.Assembly> LoadMapFile(string mapFilePath)
         {
             if (!File.Exists(mapFilePath))
                 throw new FileNotFoundException("Could not find the map file.");
@@ -38,7 +38,7 @@ namespace SG.CodeCoverage.Collection
             };
 
             using (var reader = new JsonTextReader(new StreamReader(mapFilePath)))
-                return serializer.Deserialize<AssemblyMaps>(reader);
+                return serializer.Deserialize<List<Map.Assembly>>(reader);
         }
 
         public HashSet<string> GetVisitedFiles()
