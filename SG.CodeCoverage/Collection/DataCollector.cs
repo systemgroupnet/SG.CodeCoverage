@@ -5,26 +5,22 @@ using System.IO;
 using Newtonsoft.Json;
 using AssemblyMaps = System.Collections.Generic.IEnumerable<SG.CodeCoverage.Map.Assembly>;
 using System.Linq;
+using SG.CodeCoverage.Recorder;
 
 namespace SG.CodeCoverage.Collection
 {
     public class DataCollector
     {
-        public string HitsFilePath { get; }
-        private AssemblyMaps _assemblyMaps;
+        private readonly AssemblyMaps _assemblyMaps;
 
-        public DataCollector(string mapFilePath, string hitsFilePath)
+        public DataCollector(string mapFilePath)
         {
-            HitsFilePath = hitsFilePath;
             _assemblyMaps = LoadMapFile(mapFilePath);
-            ValidateHitsFilePath();
         }
 
-        public DataCollector(AssemblyMaps assemblyMaps, string hitsFilePath)
+        public DataCollector(AssemblyMaps assemblyMaps)
         {
-            HitsFilePath = hitsFilePath;
             _assemblyMaps = assemblyMaps;
-            ValidateHitsFilePath();
         }
 
         public static IReadOnlyList<Map.Assembly> LoadMapFile(string mapFilePath)
@@ -41,43 +37,38 @@ namespace SG.CodeCoverage.Collection
                 return serializer.Deserialize<List<Map.Assembly>>(reader);
         }
 
-        public HashSet<string> GetVisitedFiles()
+        public ISet<string> GetVisitedFiles(string hitsFile)
         {
+            ValidateFilePath(hitsFile);
+            var hits = HitsRepository.LoadHits(hitsFile);
+
+            var typeIdToSourceMapper = _assemblyMaps.Select(asm => asm.Types)
+                .SelectMany(x => x)
+                .ToDictionary(
+                    t => t.Index,
+                    t => t.Methods.ToDictionary(m => m.Index, m => m.Source));
+
             var result = new HashSet<string>();
-
-            using (var fs = new FileStream(HitsFilePath, FileMode.Open))
-            using (var br = new BinaryReader(fs))
+            for (int typeId = 0; typeId < hits.Length; typeId++)
             {
-
-                var typeIdToSourceMapper = _assemblyMaps.Select(asm => asm.Types)
-                    .SelectMany(x => x)
-                    .ToDictionary(
-                        t => t.Index,
-                        t => t.Methods.ToDictionary(m => m.Index, m => m.Source));
-
-                var typesCount = br.ReadInt32();
-                for (int typeId = 0; typeId < typesCount; typeId++)
+                var typeHits = hits[typeId];
+                for (int methodId = 0; methodId < typeHits.Length; methodId++)
                 {
-                    var methodsCount = br.ReadInt32();
-                    for (int methodId = 0; methodId < methodsCount; methodId++)
+                    var hitCount = typeHits[methodId];
+                    if (hitCount > 0)
                     {
-                        var hitCount = br.ReadInt32();
-                        if (hitCount > 0)
-                        {
-                            var source = typeIdToSourceMapper[typeId][methodId];
-                            result.Add(source);
-                        }
+                        var source = typeIdToSourceMapper[typeId][methodId];
+                        result.Add(source);
                     }
                 }
             }
-
             return result;
         }
 
-        public void ValidateHitsFilePath()
+        public static void ValidateFilePath(string file)
         {
-            if (!File.Exists(HitsFilePath))
-                throw new FileNotFoundException("Could not find the hits file.");
+            if (!File.Exists(file))
+                throw new FileNotFoundException($"Could not find the file '{file}'.");
         }
 
     }
