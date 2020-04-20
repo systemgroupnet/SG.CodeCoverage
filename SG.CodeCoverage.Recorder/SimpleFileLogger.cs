@@ -5,7 +5,7 @@ namespace SG.CodeCoverage.Recorder
 {
     public class SimpleFileLogger : ILogger
     {
-        private string _logFileName;
+        private readonly string _logFileName;
 
         public SimpleFileLogger(string logFileName)
         {
