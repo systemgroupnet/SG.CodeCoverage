@@ -10,14 +10,24 @@ namespace SG.CodeCoverage.Common
             => DateTime.Now.ToString("yyyy/MM/dd - HH:mm:ss.fff");
 
         bool ILogger.IsEnabled => true;
-        public void LogError(string message) => Log(message);
-        public void LogInformation(string message) => Log(message);
-        public void LogVerbose(string message) => Log(message);
-        public void LogWarning(string message) => Log(message);
+        public void LogError(string message) => Log(ConsoleColor.Red, message);
+        public void LogInformation(string message) => Log(ConsoleColor.Green, message);
+        public void LogVerbose(string message) => Log(ConsoleColor.DarkGray, message);
+        public void LogWarning(string message) => Log(ConsoleColor.Yellow, message);
 
-        private void Log(string message)
+        private void Log(ConsoleColor color, string message)
         {
-            Console.WriteLine(GetTimeStamp() + " " + message);
+            var prevColor = Console.ForegroundColor;
+            try
+            {
+                Console.Write(GetTimeStamp() + " | ");
+                Console.ForegroundColor = color;
+                Console.WriteLine(message);
+            }
+            finally
+            {
+                Console.ForegroundColor = prevColor;
+            }
         }
     }
 }
