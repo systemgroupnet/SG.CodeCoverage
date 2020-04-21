@@ -1,53 +1,23 @@
 ﻿using Mono.Cecil;
-using SG.CodeCoverage.Common;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace SG.CodeCoverage.Instrumentation
 {
     internal class AssemblyResolver : BaseAssemblyResolver
     {
-        private readonly DefaultAssemblyResolver _defaultResolver;
-        private readonly IReadOnlyCollection<string> _additionalReferencePaths;
-        private readonly ILogger _logger;
+        private readonly ReaderParameters _readerParams;
 
-        public AssemblyResolver(IReadOnlyCollection<string> additionalReferencePaths, ILogger logger)
+        public AssemblyResolver(IReadOnlyCollection<string> additionalReferencePaths)
         {
-            _defaultResolver = new DefaultAssemblyResolver();
-            _additionalReferencePaths = additionalReferencePaths;
-            _logger = logger;
+            _readerParams = new ReaderParameters() { InMemory = true };
+
+            foreach (var path in additionalReferencePaths)
+                AddSearchDirectory(path);
         }
 
-        public override AssemblyDefinition Resolve(AssemblyNameReference name)
+        public override AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
         {
-            AssemblyDefinition assembly;
-            try
-            {
-                return assembly = _defaultResolver.Resolve(name);
-            }
-            catch (AssemblyResolutionException rex)
-            {
-                foreach (var path in _additionalReferencePaths)
-                {
-                    var asmPath = Path.Combine(path, name.Name) + ".dll";
-                    if (File.Exists(asmPath))
-                    {
-                        try
-                        {
-                            return AssemblyDefinition.ReadAssembly(asmPath);
-                        }
-                        catch(Exception ex)
-                        {
-                            _logger.LogWarning($"Found assembly \"{asmPath}\" but was unable to load it: {ex.Message}");
-                        }
-                    }
-                }
-
-                _logger.LogWarning("Could not resolve assembly " + name + ".\r\n" + rex.ToString());
-                return null;
-            }
+            return base.Resolve(name, _readerParams);
         }
     }
 }

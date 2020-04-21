@@ -57,7 +57,7 @@ namespace SG.CodeCoverage.Instrumentation
 
             _readerParams = new ReaderParameters()
             {
-                AssemblyResolver = new AssemblyResolver(AdditionalReferencePaths, _logger),
+                AssemblyResolver = new AssemblyResolver(AdditionalReferencePaths),
                 ReadSymbols = true,
                 ReadWrite = true
             };
