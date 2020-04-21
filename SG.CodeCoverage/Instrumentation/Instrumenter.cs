@@ -116,6 +116,8 @@ namespace SG.CodeCoverage.Instrumentation
             {
                 try
                 {
+                    BackupIfFolderProvided(asmFile);
+
                     using (var asm = AssemblyDefinition.ReadAssembly(asmFile, _readerParams))
                     {
                         if (IsAssemblySigned(asm))
@@ -124,14 +126,12 @@ namespace SG.CodeCoverage.Instrumentation
                             continue;
                         }
 
-                        BackupIfFolderProvided(asmFile);
-
                         var assemblyMap = InstrumentAssembly(asm);
                         assemblyMaps.Add(assemblyMap);
                         asm.Write(_writerParams);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.LogWarning(
                         $"Error while processing assembly '{asmFile}'. Assembly skipped. The error was:\r\n" +
