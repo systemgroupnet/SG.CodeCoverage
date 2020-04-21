@@ -5,7 +5,7 @@ A code coverage library, used for *Test Impact Analysis* (or *Continuous Testing
 
 SG Coverage works by weaving IL codes into project's assemblies using its `Instrumenter` type in the `SG.CodeCoverage` project. It injects a `AddHit(int typeId, int methodId)` method call that counts number of times the method visited, and creates a json map file that maps id of assemblies, types and their methods to their file paths, during this process.
 
-The `AddHit(int, int)` method resides in the `SG.CodeCoverage.Recorder` project, which is an auto generated assembly for each instrumentation phase (inspired by [AltCover](https://github.com/SteveGilham/altcover)) and holds the total number of types instrumented and an in-memory visit counter.
+The `AddHit(int, int)` method resides in the `SG.CodeCoverage.Recorder` project, which is an auto generated assembly for each instrumentation phase (inspired by [AltCover](https://github.com/SteveGilham/altcover), [Coverlet](https://github.com/tonerdo/coverlet) and [MiniCover](https://github.com/lucaslorentz/minicover)) and holds the total number of types instrumented and an in-memory visit counter.
 
 ## Steps to produce coverage results
 
