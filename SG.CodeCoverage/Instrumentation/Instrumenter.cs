@@ -95,6 +95,9 @@ namespace SG.CodeCoverage.Instrumentation
 
         public IReadOnlyCollection<Map.Assembly> Instrument()
         {
+            if (!string.IsNullOrEmpty(BackupFolder))
+                Directory.CreateDirectory(BackupFolder);
+
             var maps = InstrumentInternal();
 
             if (!string.IsNullOrEmpty(OutputMapFilePath))
