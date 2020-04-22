@@ -25,8 +25,7 @@ namespace SG.CodeCoverage.Collection
 
         public static IReadOnlyList<Map.Assembly> LoadMapFile(string mapFilePath)
         {
-            if (!File.Exists(mapFilePath))
-                throw new FileNotFoundException("Could not find the map file.");
+            ValidateFilePath(mapFilePath);
 
             var serializer = new JsonSerializer()
             {
