@@ -6,14 +6,14 @@ using System.Text;
 
 namespace SG.CodeCoverage.Collection
 {
-    public sealed class RecorderControllerClient : IDisposable
+    public sealed class RecordingController : IDisposable
     {
         public int PortNumber { get; }
         private TcpClient _tcpClient;
         private const string OkResponse = "OK";
         private const string ErrorResponse = "ERROR";
 
-        public RecorderControllerClient(int portNumber)
+        public RecordingController(int portNumber)
         {
             PortNumber = portNumber;
         }

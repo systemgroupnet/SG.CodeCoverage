@@ -62,7 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collection\DataCollector.cs" />
-    <Compile Include="Collection\RecorderControllerClient.cs" />
+    <Compile Include="Collection\RecordingController.cs" />
     <Compile Include="Common\ConsoleLogger.cs" />
     <Compile Include="Common\ILogger.cs" />
     <Compile Include="GlobalSuppressions.cs" />

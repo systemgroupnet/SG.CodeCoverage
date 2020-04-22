@@ -72,7 +72,7 @@ namespace SG.CodeCoverage.Tests
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
-            var client = new Collection.RecorderControllerClient(PortNumber);
+            var client = new Collection.RecordingController(PortNumber);
             var assembly = Assembly.LoadFrom(InstrumentedAssemblyPath);
             var calc = assembly.DefinedTypes.Where(x => x.Name == nameof(PrimeCalculator)).FirstOrDefault();
             var res = calc.GetMethod("IsPrime").Invoke(calc.DeclaredConstructors.First().Invoke(null), new object[] { 7 });
@@ -82,7 +82,7 @@ namespace SG.CodeCoverage.Tests
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
-            var client = new RecorderControllerClient(PortNumber);
+            var client = new RecordingController(PortNumber);
             var hitsFile = Path.Combine(OutputPath, "hits.bin");
             client.SaveHitsAndReset(hitsFile);
             return new DataCollector(MapFilePath).GetVisitedFiles(hitsFile);
