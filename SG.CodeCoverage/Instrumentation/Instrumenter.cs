@@ -16,6 +16,7 @@ namespace SG.CodeCoverage.Instrumentation
         private readonly ILogger _logger;
         private readonly ReaderParameters _readerParams;
         private readonly WriterParameters _writerParams;
+        private static readonly string _delegateBaseTypeFullName;
 
         public IReadOnlyCollection<string> AssemblyFileNames { get; }
         public IReadOnlyCollection<string> AdditionalReferencePaths { get; }
@@ -23,6 +24,11 @@ namespace SG.CodeCoverage.Instrumentation
         public string OutputMapFilePath { get; }
         public int ControllerPortNumber { get; }
         public string BackupFolder { get; set; }
+
+        static Instrumenter()
+        {
+            _delegateBaseTypeFullName = typeof(MulticastDelegate).FullName;
+        }
 
         /// <summary>
         /// </summary>
@@ -169,6 +175,9 @@ namespace SG.CodeCoverage.Instrumentation
 
             foreach (var type in module.GetTypes())
             {
+                if (type.IsInterface || type.IsEnum || IsDelegateType(type))
+                    continue;
+
                 var typeMap = InstrumentType(type);
 
                 if (typeMap != null)
@@ -272,6 +281,12 @@ namespace SG.CodeCoverage.Instrumentation
         private string GetPdbFileName(string assemblyFile)
         {
             return Path.ChangeExtension(assemblyFile, "pdb");
+        }
+
+        private static bool IsDelegateType(TypeDefinition typeDef)
+        {
+            return typeDef.BaseType != null &&
+                typeDef.BaseType.FullName == _delegateBaseTypeFullName;
         }
     }
 }

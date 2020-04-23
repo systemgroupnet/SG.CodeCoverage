@@ -50,6 +50,7 @@
     <Compile Include="SampleStruct.cs" />
     <Compile Include="StaticClassWithStaticConstructor.cs" />
     <Compile Include="ClassWithStaticInitializer.cs" />
+    <Compile Include="INotInstrumentable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
