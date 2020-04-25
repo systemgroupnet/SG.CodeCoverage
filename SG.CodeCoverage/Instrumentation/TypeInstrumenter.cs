@@ -2,7 +2,6 @@
 using SG.CodeCoverage.Common;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using System;
 using Mono.Cecil.Cil;
 using SG.CodeCoverage.Metadata;

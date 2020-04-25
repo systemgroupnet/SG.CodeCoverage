@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SG.CodeCoverage.Common
+﻿namespace SG.CodeCoverage.Common
 {
     public interface ILogger
     {
