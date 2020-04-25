@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System;
 using Mono.Cecil.Cil;
+using SG.CodeCoverage.Metadata;
 
 namespace SG.CodeCoverage.Instrumentation
 {
@@ -29,13 +30,9 @@ namespace SG.CodeCoverage.Instrumentation
             _addHitMethodRef = _module.ImportReference(addHitMethod);
         }
 
-        public Map.Type Instrument()
+        public InstrumentedTypeMap Instrument()
         {
-            var typeMap = new Map.Type()
-            {
-                FullName = _type.FullName,
-                Index = _index
-            };
+            var methodsMaps = new List<InstrumentedMethodMap>();
 
             _currentMethodIndex = 0;
 
@@ -43,15 +40,15 @@ namespace SG.CodeCoverage.Instrumentation
             {
                 var methodMap = InstrumentMethod(method);
                 if (methodMap != null)
-                    typeMap.Methods.Add(methodMap);
+                    methodsMaps.Add(methodMap);
             }
 
             AddInitializerCall(_currentMethodIndex);
 
-            return typeMap;
+            return new InstrumentedTypeMap(_type.FullName, _index, methodsMaps.AsReadOnly());
         }
 
-        private Map.Method InstrumentMethod(MethodDefinition method)
+        private InstrumentedMethodMap InstrumentMethod(MethodDefinition method)
         {
             if (!method.HasBody)
                 return null;
@@ -66,18 +63,11 @@ namespace SG.CodeCoverage.Instrumentation
             var startLine = debugInformation.SequencePoints[0].StartLine;
 
             int methodIndex = _currentMethodIndex++;
-            var methodMap = new Map.Method()
-            {
-                Index = methodIndex,
-                Name = method.FullName,
-                Source = sourceFile,
-                StartLine = startLine
-            };
 
             RemoveAllCalls(methodBody, _addHitMethodRef);
             InjectCall(methodBody, _addHitMethodRef, _index, methodIndex);
 
-            return methodMap;
+            return new InstrumentedMethodMap(method.FullName, methodIndex, sourceFile, startLine);
         }
 
         private void AddInitializerCall(int totalMethods)
@@ -87,7 +77,7 @@ namespace SG.CodeCoverage.Instrumentation
                 cctor = CreateCCtor();
 
             // We need to remove this flag, so we can be sure that the type will be initialized
-            // before it's first use (i.e. it's static constructor is called before any method
+            // before its first use (i.e. it's static constructor is called before any method
             // of the type is used).
             _type.IsBeforeFieldInit = false;
 
@@ -123,7 +113,7 @@ namespace SG.CodeCoverage.Instrumentation
         private void RemoveAllCalls(MethodBody body, MethodReference methodToRemove)
         {
             var intName = typeof(int).Name;
-            if(
+            if (
                 methodToRemove.Parameters.Count != 2 ||
                 methodToRemove.Parameters[0].ParameterType.Name != intName ||
                 methodToRemove.Parameters[1].ParameterType.Name != intName)
@@ -132,10 +122,10 @@ namespace SG.CodeCoverage.Instrumentation
             }
 
             var instructions = body.Instructions.ToList();
-            for(int i = 0; i < instructions.Count; i++)
+            for (int i = 0; i < instructions.Count; i++)
             {
                 var ins = instructions[i];
-                if(
+                if (
                     ins.OpCode.Code == Code.Call &&
                     ins.Operand is MethodReference mr &&
                     mr.FullName == methodToRemove.FullName)

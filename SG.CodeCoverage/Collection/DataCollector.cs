@@ -1,29 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using AssemblyMaps = System.Collections.Generic.IEnumerable<SG.CodeCoverage.Map.Assembly>;
 using System.Linq;
 using SG.CodeCoverage.Recorder;
+using SG.CodeCoverage.Metadata;
 
 namespace SG.CodeCoverage.Collection
 {
     public class DataCollector
     {
-        private readonly AssemblyMaps _assemblyMaps;
+        private readonly InstrumentationMap _map;
 
         public DataCollector(string mapFilePath)
         {
-            _assemblyMaps = LoadMapFile(mapFilePath);
+            _map = LoadMapFile(mapFilePath);
         }
 
-        public DataCollector(AssemblyMaps assemblyMaps)
+        public DataCollector(InstrumentationMap map)
         {
-            _assemblyMaps = assemblyMaps;
+            _map = map;
         }
 
-        public static IReadOnlyList<Map.Assembly> LoadMapFile(string mapFilePath)
+        public static InstrumentationMap LoadMapFile(string mapFilePath)
         {
             ValidateFilePath(mapFilePath);
 
@@ -33,7 +31,7 @@ namespace SG.CodeCoverage.Collection
             };
 
             using (var reader = new JsonTextReader(new StreamReader(mapFilePath)))
-                return serializer.Deserialize<List<Map.Assembly>>(reader);
+                return serializer.Deserialize<InstrumentationMap>(reader);
         }
 
         public ISet<string> GetVisitedFiles(string hitsFile)
@@ -41,7 +39,7 @@ namespace SG.CodeCoverage.Collection
             ValidateFilePath(hitsFile);
             var hits = HitsRepository.LoadHits(hitsFile);
 
-            var typeIdToSourceMapper = _assemblyMaps.Select(asm => asm.Types)
+            var typeIdToSourceMapper = _map.Assemblies.Select(asm => asm.Types)
                 .SelectMany(x => x)
                 .ToDictionary(
                     t => t.Index,

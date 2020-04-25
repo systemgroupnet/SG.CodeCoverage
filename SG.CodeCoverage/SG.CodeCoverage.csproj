@@ -66,12 +66,13 @@
     <Compile Include="Common\ConsoleLogger.cs" />
     <Compile Include="Common\ILogger.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Metadata\InstrumentedAssemblyMap.cs" />
     <Compile Include="Instrumentation\AssemblyResolver.cs" />
     <Compile Include="Instrumentation\Instrumenter.cs" />
+    <Compile Include="Metadata\InstrumentedMethodMap.cs" />
+    <Compile Include="Metadata\InstrumentedTypeMap.cs" />
     <Compile Include="Instrumentation\TypeInstrumenter.cs" />
-    <Compile Include="Map\Assembly.cs" />
-    <Compile Include="Map\Method.cs" />
-    <Compile Include="Map\Type.cs" />
+    <Compile Include="Metadata\InstrumentationMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

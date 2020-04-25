@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using Mono.Cecil;
 using SG.CodeCoverage.Common;
 using System.IO;
 using Newtonsoft.Json;
 using Mono.Cecil.Cil;
+using SG.CodeCoverage.Metadata;
 
 namespace SG.CodeCoverage.Instrumentation
 {
@@ -99,24 +99,24 @@ namespace SG.CodeCoverage.Instrumentation
         {
         }
 
-        public IReadOnlyCollection<Map.Assembly> Instrument()
+        public InstrumentationMap Instrument()
         {
             if (!string.IsNullOrEmpty(BackupFolder))
                 Directory.CreateDirectory(BackupFolder);
 
-            var maps = InstrumentInternal();
+            var map = InstrumentInternal();
 
             if (!string.IsNullOrEmpty(OutputMapFilePath))
-                SaveMapFile(maps, OutputMapFilePath);
+                SaveMapFile(map, OutputMapFilePath);
 
-            return maps;
+            return map;
         }
 
-        private IReadOnlyCollection<Map.Assembly> InstrumentInternal()
+        private InstrumentationMap InstrumentInternal()
         {
             _currentTypeIndex = 0;
 
-            var assemblyMaps = new List<Map.Assembly>();
+            var assemblyMaps = new List<InstrumentedAssemblyMap>();
 
             foreach (var asmFile in AssemblyFileNames)
             {
@@ -147,7 +147,7 @@ namespace SG.CodeCoverage.Instrumentation
 
             CopyAndModifyRecorderAssembly(_currentTypeIndex);
 
-            return assemblyMaps;
+            return new InstrumentationMap(assemblyMaps);
         }
 
         private void BackupIfFolderProvided(string asmFile)
@@ -165,13 +165,10 @@ namespace SG.CodeCoverage.Instrumentation
                 asmDef.MainModule.Attributes.HasFlag(ModuleAttributes.StrongNameSigned);
         }
 
-        private Map.Assembly InstrumentAssembly(AssemblyDefinition assembly)
+        private InstrumentedAssemblyMap InstrumentAssembly(AssemblyDefinition assembly)
         {
             var module = assembly.MainModule;
-            var assemblyMap = new Map.Assembly()
-            {
-                Name = assembly.FullName
-            };
+            var typesMaps = new List<InstrumentedTypeMap>();
 
             foreach (var type in module.GetTypes())
             {
@@ -181,12 +178,13 @@ namespace SG.CodeCoverage.Instrumentation
                 var typeMap = InstrumentType(type);
 
                 if (typeMap != null)
-                    assemblyMap.Types.Add(typeMap);
+                    typesMaps.Add(typeMap);
             }
-            return assemblyMap;
+
+            return new InstrumentedAssemblyMap(assembly.FullName, typesMaps.AsReadOnly());
         }
 
-        private Map.Type InstrumentType(TypeDefinition type)
+        private InstrumentedTypeMap InstrumentType(TypeDefinition type)
         {
             if (!type.HasMethods)
                 return null;
@@ -257,7 +255,7 @@ namespace SG.CodeCoverage.Instrumentation
             }
         }
 
-        private void SaveMapFile(IEnumerable<Map.Assembly> assemblyMaps, string outputFilePath)
+        private void SaveMapFile(InstrumentationMap map, string outputFilePath)
         {
             var serializer = new JsonSerializer()
             {
@@ -265,7 +263,7 @@ namespace SG.CodeCoverage.Instrumentation
             };
 
             using (var writer = new JsonTextWriter(new StreamWriter(outputFilePath)))
-                serializer.Serialize(writer, assemblyMaps);
+                serializer.Serialize(writer, map);
         }
 
         private static TypeDefinition FindType(AssemblyDefinition asmDef, string typeName)
