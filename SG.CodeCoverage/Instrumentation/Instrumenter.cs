@@ -147,7 +147,7 @@ namespace SG.CodeCoverage.Instrumentation
 
             CopyAndModifyRecorderAssembly(_currentTypeIndex);
 
-            return new InstrumentationMap(assemblyMaps);
+            return new InstrumentationMap(VersionInfo.Current, assemblyMaps);
         }
 
         private void BackupIfFolderProvided(string asmFile)

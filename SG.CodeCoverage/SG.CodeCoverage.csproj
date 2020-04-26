@@ -65,6 +65,7 @@
     <Compile Include="Collection\RecordingController.cs" />
     <Compile Include="Common\ConsoleLogger.cs" />
     <Compile Include="Common\ILogger.cs" />
+    <Compile Include="Common\VersionInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Metadata\InstrumentedAssemblyMap.cs" />
     <Compile Include="Instrumentation\AssemblyResolver.cs" />
