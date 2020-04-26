@@ -51,6 +51,7 @@ namespace SG.CodeCoverage.Recorder
             using (var fs = new FileStream(hitsFilePath, FileMode.CreateNew))
             using (var bw = new BinaryWriter(fs))
             {
+                bw.Write(InjectedConstants.InstrumentationUniqueId);
                 bw.Write(hits.Length); // Number of total types
                 for (int typeIndex = 0; typeIndex < hits.Length; typeIndex++)
                 {
@@ -68,11 +69,12 @@ namespace SG.CodeCoverage.Recorder
             }
         }
 
-        public static int[][] LoadHits(string hitsFilePath)
+        public static (Guid uniqueId, int[][]) LoadHits(string hitsFilePath)
         {
             using (var fs = new FileStream(hitsFilePath, FileMode.Open))
             using (var br = new BinaryReader(fs))
             {
+                var uniqueIdStr = br.ReadString();
                 int typesCount = br.ReadInt32();
                 var hits = new int[typesCount][];
                 for (int typeIndex = 0; typeIndex < hits.Length; typeIndex++)
@@ -89,7 +91,7 @@ namespace SG.CodeCoverage.Recorder
                     if (storedSum != sum)
                         throw new InvalidDataException($"Error in hits file. Hits sum mismatch. Stored in file: {storedSum}, Expected: {sum}");
                 }
-                return hits;
+                return (Guid.Parse(uniqueIdStr), hits);
             }
         }
     }

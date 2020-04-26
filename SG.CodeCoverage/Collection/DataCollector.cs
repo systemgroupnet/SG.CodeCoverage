@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using SG.CodeCoverage.Recorder;
 using SG.CodeCoverage.Metadata;
+using System;
 
 namespace SG.CodeCoverage.Collection
 {
@@ -37,7 +38,9 @@ namespace SG.CodeCoverage.Collection
         public ISet<string> GetVisitedFiles(string hitsFile)
         {
             ValidateFilePath(hitsFile);
-            var hits = HitsRepository.LoadHits(hitsFile);
+            var (uniqueId, hits) = HitsRepository.LoadHits(hitsFile);
+            if (uniqueId != _map.UniqueId)
+                throw new Exception($"Hits file's unique id ({uniqueId}) does not match the unique id in the map file ({_map.UniqueId}).");
 
             var typeIdToSourceMapper = _map.Assemblies.Select(asm => asm.Types)
                 .SelectMany(x => x)

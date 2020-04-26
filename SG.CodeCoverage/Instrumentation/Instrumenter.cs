@@ -24,6 +24,7 @@ namespace SG.CodeCoverage.Instrumentation
         public string OutputMapFilePath { get; }
         public int ControllerPortNumber { get; }
         public string BackupFolder { get; set; }
+        public Guid UniqueId { get; private set; }
 
         static Instrumenter()
         {
@@ -101,6 +102,8 @@ namespace SG.CodeCoverage.Instrumentation
 
         public InstrumentationMap Instrument()
         {
+            UniqueId = Guid.NewGuid();
+
             if (!string.IsNullOrEmpty(BackupFolder))
                 Directory.CreateDirectory(BackupFolder);
 
@@ -147,7 +150,7 @@ namespace SG.CodeCoverage.Instrumentation
 
             CopyAndModifyRecorderAssembly(_currentTypeIndex);
 
-            return new InstrumentationMap(VersionInfo.Current, assemblyMaps);
+            return new InstrumentationMap(VersionInfo.Current, UniqueId, assemblyMaps);
         }
 
         private void BackupIfFolderProvided(string asmFile)
@@ -181,6 +184,8 @@ namespace SG.CodeCoverage.Instrumentation
                     typesMaps.Add(typeMap);
             }
 
+            AddUniqueIdAssemblyAttribute(assembly);
+
             return new InstrumentedAssemblyMap(assembly.FullName, typesMaps.AsReadOnly());
         }
 
@@ -191,6 +196,26 @@ namespace SG.CodeCoverage.Instrumentation
 
             var typeIndex = _currentTypeIndex++;
             return new TypeInstrumenter(typeIndex, type, _logger).Instrument();
+        }
+
+        private void AddUniqueIdAssemblyAttribute(AssemblyDefinition assembly)
+        {
+            var module = assembly.MainModule;
+            var attribType = typeof(Recorder.InstrumentationUniqueIdAttribute);
+            var attribTypeRef = module.ImportReference(attribType);
+            var attrib = assembly.CustomAttributes.FirstOrDefault(a => a.AttributeType == attribTypeRef);
+            var attribArgument = new CustomAttributeArgument(module.ImportReference(typeof(string)), UniqueId.ToString());
+            if (attrib == null)
+            {
+                var constructor = attribType.GetConstructors()[0];
+                attrib = new CustomAttribute(module.ImportReference(constructor));
+                attrib.ConstructorArguments.Add(attribArgument);
+                assembly.CustomAttributes.Add(attrib);
+            }
+            else
+            {
+                attrib.ConstructorArguments[0] = attribArgument;
+            }
         }
 
         private void CopyAndModifyRecorderAssembly(int typesCount)
@@ -220,6 +245,11 @@ namespace SG.CodeCoverage.Instrumentation
                     instructions,
                     nameof(Recorder.InjectedConstants.ControllerServerPort),
                     ControllerPortNumber);
+
+                ChangeFieldSetterLoadedValue(
+                    instructions,
+                    nameof(Recorder.InjectedConstants.InstrumentationUniqueId),
+                    UniqueId.ToString());
 
                 asm.Write(_writerParams);
             }
