@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SG.CodeCoverage.Common
 {
-    public class VersionInfo
+    public class VersionInfo : IComparable<VersionInfo>
     {
         public const string CurrentVersionString = "0.10.0";
         public int Major { get; }
@@ -28,6 +28,17 @@ namespace SG.CodeCoverage.Common
         {
             var parts = CurrentVersionString.Split('.');
             Current = new VersionInfo(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
+        }
+
+        public int CompareTo(VersionInfo other)
+        {
+            var r = Major.CompareTo(other.Major);
+            if (r != 0)
+                return r;
+            r = Minor.CompareTo(other.Minor);
+            if (r != 0)
+                return r;
+            return Patch.CompareTo(other.Patch);
         }
     }
 }
