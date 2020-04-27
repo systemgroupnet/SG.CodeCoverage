@@ -25,6 +25,7 @@ namespace SG.CodeCoverage.Instrumentation
         public int ControllerPortNumber { get; }
         public string BackupFolder { get; set; }
         public Guid UniqueId { get; private set; }
+        public string RecorderLogFilePath { get; set; }
 
         static Instrumenter()
         {
@@ -250,6 +251,12 @@ namespace SG.CodeCoverage.Instrumentation
                     instructions,
                     nameof(Recorder.InjectedConstants.InstrumentationUniqueId),
                     UniqueId.ToString());
+
+                if (!string.IsNullOrWhiteSpace(RecorderLogFilePath))
+                    ChangeFieldSetterLoadedValue(
+                        instructions,
+                        nameof(Recorder.InjectedConstants.RecorderLogFileName),
+                        RecorderLogFilePath);
 
                 asm.Write(_writerParams);
             }

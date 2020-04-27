@@ -12,7 +12,6 @@
         /// The port number that `RecordingControllerServer` will listen on. It will be modified by instrumenter.
         /// </summary>
         public static readonly int ControllerServerPort = 54321;
-        public static readonly string WorkingDirectory = string.Empty;
         public static readonly string RecorderLogFileName = "CodeCoverageRecorderLog.txt";
     }
 }

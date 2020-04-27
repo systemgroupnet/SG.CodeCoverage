@@ -26,7 +26,7 @@ namespace SG.CodeCoverage.Recorder
 
         public static void Initialize()
         {
-            string logFileName = GetLogFileName();
+            string logFileName = InjectedConstants.RecorderLogFileName;
             _instance = new RecordingControllerServer(new SimpleFileLogger(logFileName));
         }
 
@@ -36,7 +36,7 @@ namespace SG.CodeCoverage.Recorder
             {
                 var listener = new TcpListener(IPAddress.Any, port);
                 listener.Start();
-                _logger.LogInformation(nameof(RecordingControllerServer) + ": Started listening on port " + port + ".");
+                _logger.LogInformation("Started listening on port " + port + ".");
                 try
                 {
                     while (true)
@@ -46,16 +46,16 @@ namespace SG.CodeCoverage.Recorder
             }
             catch (Exception ex)
             {
-                _logger.LogError("RecordingController: Listening failed. Error:\r\n" + ex.ToString());
+                _logger.LogError("Listening failed. Error:\r\n" + ex.ToString());
             }
         }
 
         private async Task AcceptAsync(TcpClient client)
         {
             await Task.Yield();
-            _logger.LogInformation("A connection is established.");
             try
             {
+                _logger.LogInformation("A connection is established.");
                 using (client)
                 using (NetworkStream nStream = client.GetStream())
                 {
@@ -124,14 +124,6 @@ namespace SG.CodeCoverage.Recorder
         {
             HitsRepository.SaveAndResetHits(fileName);
             return null;
-        }
-
-        private static string GetLogFileName()
-        {
-            var logFileName = InjectedConstants.RecorderLogFileName;
-            if (!Path.IsPathRooted(logFileName))
-                logFileName = Path.Combine(InjectedConstants.WorkingDirectory, logFileName);
-            return logFileName;
         }
     }
 }
