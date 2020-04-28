@@ -26,6 +26,8 @@ namespace SG.CodeCoverage.Recorder
 
         public static void Initialize()
         {
+            if (InjectedConstants.ControllerServerPort == 0)
+                return;
             string logFileName = InjectedConstants.RecorderLogFileName;
             _instance = new RecordingControllerServer(new SimpleFileLogger(logFileName));
         }
