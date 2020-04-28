@@ -68,11 +68,12 @@ namespace SG.CodeCoverage.Tests
                 Directory.Delete(dir, true);
         }
 
-        public void InvokeSumTypes()
+        public void RunSomeCode()
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
             var client = new Collection.RecordingController(PortNumber);
+            Assembly.LoadFrom(Path.Combine(OutputPath, "SG.CodeCoverage.Recorder.dll"));
             var assembly = Assembly.LoadFrom(InstrumentedAssemblyPath);
             var calc = assembly.DefinedTypes.Where(x => x.Name == nameof(PrimeCalculator)).FirstOrDefault();
             var res = calc.GetMethod("IsPrime").Invoke(calc.DeclaredConstructors.First().Invoke(null), new object[] { 7 });

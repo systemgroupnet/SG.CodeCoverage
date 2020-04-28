@@ -13,7 +13,7 @@ namespace SG.CodeCoverage.TestConsole
         {
             var tester = new InstrumenterTester();
             tester.InstrumentSampleProject();
-            tester.InvokeSumTypes();
+            tester.RunSomeCode();
             var visitedFiles = tester.GetVisitedFiles();
             Console.WriteLine(visitedFiles.Count);
         }
