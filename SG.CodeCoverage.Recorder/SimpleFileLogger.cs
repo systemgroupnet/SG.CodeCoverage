@@ -23,7 +23,7 @@ namespace SG.CodeCoverage.Recorder
 
         private void Log(string message)
         {
-            File.AppendAllText(_logFileName, GetTimeStamp() + " " + message);
+            File.AppendAllText(_logFileName, GetTimeStamp() + " " + message + Environment.NewLine);
         }
     }
 }
