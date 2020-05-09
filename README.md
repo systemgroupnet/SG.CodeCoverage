@@ -11,5 +11,5 @@ The `AddHit(int, int)` method resides in the `SG.CodeCoverage.Recorder` project,
 
 1. Instrument assemblies using `Instrumenter` class. This process outputs a `json` map file.
 2. When any method in the project is called, instrumented assemblies make sure that the `RecordingControllerServer` is running and collecting data, and then sends the hit records to the server.
-3. After running each test, you can call `RecorderControllerClient.SaveHitsAndReset(string outputPath)`. This will send a request to server to save the visited types and methods as a binary file like `hist.test1.bin`, then resets the counter.
+3. After running each test, you can call `RecorderControllerClient.SaveHitsAndReset(string outputPath)`. This will send a request to server to save the visited types and methods as a binary file like `hits.test1.bin`, then resets the counter.
 4. After collecting test hits, you can find the visited files by merging the `json` map file and the binary hit file. This can be easily done using `DataCollector.GetVisitedFiles` method which does this task.
