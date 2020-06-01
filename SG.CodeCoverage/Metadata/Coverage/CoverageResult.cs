@@ -21,6 +21,11 @@ namespace SG.CodeCoverage.Metadata.Coverage
         public Guid UniqueId { get; }
         public IReadOnlyCollection<CoverageAssemblyResult> Assemblies { get; }
 
+        public List<string> GetSources()
+        {
+            return Assemblies.SelectMany(x => x.Types).SelectMany(x => x.Methods).Select(x => x.Source).Distinct().ToList();
+        }
+
         public SummaryResult GetLineSummary()
         {
             var result = new SummaryResult(0, 0);
@@ -41,6 +46,7 @@ namespace SG.CodeCoverage.Metadata.Coverage
         {
             return new SummaryResult(0, 0);
         }
+
     }
 
     internal static class InstrumentToCoverageMapper

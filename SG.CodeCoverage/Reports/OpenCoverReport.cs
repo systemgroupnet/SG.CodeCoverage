@@ -44,7 +44,7 @@ namespace SG.CodeCoverage.Reports
                 XElement files = new XElement("Files");
                 XElement classes = new XElement("Classes");
 
-                var docToTypesMap = GetDocumentToTypesMap(mod);
+                var docToTypesMap = mod.GetDocumentToTypesMap();
 
                 foreach (var doc in docToTypesMap)
                 {
@@ -198,31 +198,6 @@ namespace SG.CodeCoverage.Reports
             return Encoding.UTF8.GetString(stream.ToArray());
         }
 
-        private Dictionary<string, List<CoverageTypeResult>> GetDocumentToTypesMap(CoverageAssemblyResult assembly)
-        {
-            var result = new Dictionary<string, List<CoverageTypeResult>>();
 
-            foreach(var type in assembly.Types)
-            {
-                var fileNames = type.Methods.Select(x => x.Source);
-
-                foreach(var fileName in fileNames)
-                {
-                    if (result.ContainsKey(fileName))
-                    {
-                        if (!result[fileName].Contains(type))
-                        {
-                            result[fileName].Add(type);
-                        }
-                    }
-                    else
-                    {
-                        result.Add(fileName, new List<CoverageTypeResult> { type });
-                    }
-                }
-            }
-
-            return result;
-        }
     }
 }

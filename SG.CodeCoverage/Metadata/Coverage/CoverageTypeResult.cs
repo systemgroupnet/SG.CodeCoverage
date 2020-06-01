@@ -45,5 +45,10 @@ namespace SG.CodeCoverage.Metadata.Coverage
                covered: Methods.Count(x => x.IsVisited)
             );
         }
+
+        public int CalculateCyclomaticComplexity()
+        {
+            return 0;
+        }
     }
 }

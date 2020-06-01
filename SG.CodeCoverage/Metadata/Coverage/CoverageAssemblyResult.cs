@@ -18,6 +18,33 @@ namespace SG.CodeCoverage.Metadata.Coverage
         public IReadOnlyCollection<CoverageTypeResult> Types { get; }
         public bool IsVisited => Types.Any(x => x.IsVisited);
 
+        public Dictionary<string, List<CoverageTypeResult>> GetDocumentToTypesMap()
+        {
+            var result = new Dictionary<string, List<CoverageTypeResult>>();
+
+            foreach (var type in Types)
+            {
+                var fileNames = type.Methods.Select(x => x.Source);
+
+                foreach (var fileName in fileNames)
+                {
+                    if (result.ContainsKey(fileName))
+                    {
+                        if (!result[fileName].Contains(type))
+                        {
+                            result[fileName].Add(type);
+                        }
+                    }
+                    else
+                    {
+                        result.Add(fileName, new List<CoverageTypeResult> { type });
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public SummaryResult GetLineSummary()
         {
             var result = new SummaryResult(0, 0);
@@ -31,6 +58,16 @@ namespace SG.CodeCoverage.Metadata.Coverage
             }
 
             return result;
+        }
+
+        public SummaryResult GetBranchSummary()
+        {
+            return new SummaryResult(0, 0);
+        }
+
+        public int CalculateCyclomaticComplexity()
+        {
+            return 0;
         }
     }
 }
