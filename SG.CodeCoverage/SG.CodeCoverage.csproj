@@ -75,6 +75,10 @@
     <Compile Include="Instrumentation\TypeInstrumenter.cs" />
     <Compile Include="Metadata\InstrumentationMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\CoverageResult.cs" />
+    <Compile Include="Reports\CoverageSummary.cs" />
+    <Compile Include="Reports\IReport.cs" />
+    <Compile Include="Reports\OpenCoverReport.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -85,5 +89,6 @@
       <Name>SG.CodeCoverage.Recorder</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

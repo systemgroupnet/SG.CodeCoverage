@@ -60,13 +60,14 @@ namespace SG.CodeCoverage.Instrumentation
 
             var sourceFile = debugInformation.SequencePoints.Select(s => s.Document.Url).FirstOrDefault();
             var startLine = debugInformation.SequencePoints[0].StartLine;
+            var endLine = debugInformation.SequencePoints.Last().EndLine;
 
             int methodIndex = _currentMethodIndex++;
 
             RemoveAllCalls(methodBody, _addHitMethodRef);
             InjectCall(methodBody, _addHitMethodRef, _index, methodIndex);
 
-            return new InstrumentedMethodMap(method.FullName, methodIndex, sourceFile, startLine);
+            return new InstrumentedMethodMap(method.FullName, methodIndex, sourceFile, startLine, endLine);
         }
 
         private void AddInitializerCall(int totalMethods)
