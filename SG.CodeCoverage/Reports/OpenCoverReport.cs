@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SG.CodeCoverage.Metadata.Coverage;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -17,7 +18,6 @@ namespace SG.CodeCoverage.Reports
 
         public string GenerateReport(CoverageResult result)
         {
-            var summary = new CoverageSummary();
             XDocument xml = new XDocument();
             XElement coverage = new XElement("CoverageSession");
             XElement coverageSummary = new XElement("Summary");
@@ -28,7 +28,7 @@ namespace SG.CodeCoverage.Reports
 
             int i = 1;
 
-            foreach (var mod in result.Map.Assemblies)
+            foreach (var mod in result.Assemblies)
             {
                 XElement module = new XElement("Module");
                 module.Add(new XAttribute("hash", Guid.NewGuid().ToString().ToUpper()));
@@ -62,16 +62,12 @@ namespace SG.CodeCoverage.Reports
 
                         XElement methods = new XElement("Methods");
                         int j = 0;
-                        var typeHits = result.Hits[cls.Index];
-                        var classVisited = cls.Methods.Any(meth => typeHits[meth.Index] > 0);
 
                         foreach (var meth in cls.Methods)
                         {
-                            var visitCount = typeHits[meth.Index];
-                            var methodVisited = visitCount > 0;
 
-                            var methLineCoverage = summary.MethodLineCoverage(meth, visitCount);
-                            var methBranchCoverage = summary.MethodBranchCoverage(meth);
+                            var methLineCoverage = meth.GetLineSummary();
+                            var methBranchCoverage = meth.GetBranchSummary();
                             int methCyclomaticComplexity = 0;
 
                             XElement method = new XElement("Method");
@@ -111,7 +107,7 @@ namespace SG.CodeCoverage.Reports
 
 
                             numMethods++;
-                            if (methodVisited)
+                            if (meth.IsVisited)
                                 visitedMethods++;
 
                             methodSummary.Add(new XAttribute("numSequencePoints", methLineCoverage.Total.ToString()));
@@ -124,7 +120,7 @@ namespace SG.CodeCoverage.Reports
                             methodSummary.Add(new XAttribute("minCyclomaticComplexity", methCyclomaticComplexity.ToString()));
                             methodSummary.Add(new XAttribute("visitedClasses", "0"));
                             methodSummary.Add(new XAttribute("numClasses", "0"));
-                            methodSummary.Add(new XAttribute("visitedMethods", methodVisited ? "1" : "0"));
+                            methodSummary.Add(new XAttribute("visitedMethods", meth.IsVisited ? "1" : "0"));
                             methodSummary.Add(new XAttribute("numMethods", "1"));
 
                             method.Add(methodSummary);
@@ -139,12 +135,12 @@ namespace SG.CodeCoverage.Reports
                         }
 
                         numClasses++;
-                        if (classVisited)
+                        if (cls.IsVisited)
                             visitedClasses++;
 
-                        var classLineCoverage = summary.TypeLineCoverage(cls, typeHits);
-                        var classBranchCoverage = summary.TypeBranchCoverage(cls, typeHits);
-                        var classMethodCoverage = summary.TypeMethodCoverage(cls, typeHits);
+                        var classLineCoverage = cls.GetLineSummary();
+                        var classBranchCoverage = cls.GetBranchSummary();
+                        var classMethodCoverage = cls.GetMethodSummary();
                         var classMaxCyclomaticComplexity = 0;
                         var classMinCyclomaticComplexity = 0;
 
@@ -156,7 +152,7 @@ namespace SG.CodeCoverage.Reports
                         classSummary.Add(new XAttribute("branchCoverage", classBranchCoverage.Percentage.ToString("G", CultureInfo.InvariantCulture)));
                         classSummary.Add(new XAttribute("maxCyclomaticComplexity", classMaxCyclomaticComplexity.ToString()));
                         classSummary.Add(new XAttribute("minCyclomaticComplexity", classMinCyclomaticComplexity.ToString()));
-                        classSummary.Add(new XAttribute("visitedClasses", classVisited ? "1" : "0"));
+                        classSummary.Add(new XAttribute("visitedClasses", cls.IsVisited ? "1" : "0"));
                         classSummary.Add(new XAttribute("numClasses", "1"));
                         classSummary.Add(new XAttribute("visitedMethods", classMethodCoverage.Covered.ToString()));
                         classSummary.Add(new XAttribute("numMethods", classMethodCoverage.Total.ToString()));
@@ -174,8 +170,8 @@ namespace SG.CodeCoverage.Reports
                 modules.Add(module);
             }
 
-            var moduleLineCoverage = summary.AssemblyLineCoverage(result);
-            var moduleBranchCoverage = summary.AssemblyBranchCoverage(result);
+            var moduleLineCoverage = result.GetLineSummary();
+            var moduleBranchCoverage = result.GetBranchSummary();
             var moduleMaxCyclomaticComplexity = 0;
             var moduleMinCyclomaticComplexity = 0;
 
@@ -202,9 +198,9 @@ namespace SG.CodeCoverage.Reports
             return Encoding.UTF8.GetString(stream.ToArray());
         }
 
-        private Dictionary<string, List<Metadata.InstrumentedTypeMap>> GetDocumentToTypesMap(Metadata.InstrumentedAssemblyMap assembly)
+        private Dictionary<string, List<CoverageTypeResult>> GetDocumentToTypesMap(CoverageAssemblyResult assembly)
         {
-            var result = new Dictionary<string, List<Metadata.InstrumentedTypeMap>>();
+            var result = new Dictionary<string, List<CoverageTypeResult>>();
 
             foreach(var type in assembly.Types)
             {
@@ -221,7 +217,7 @@ namespace SG.CodeCoverage.Reports
                     }
                     else
                     {
-                        result.Add(fileName, new List<Metadata.InstrumentedTypeMap> { type });
+                        result.Add(fileName, new List<CoverageTypeResult> { type });
                     }
                 }
             }
