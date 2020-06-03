@@ -33,7 +33,7 @@ namespace SG.CodeCoverage.Recorder
             SaveHits(hits, hitsFile);
         }
 
-        private static int[][] GetAndResetHits()
+        public static int[][] GetAndResetHits()
         {
             int[][] newHits = new int[InjectedConstants.TypesCount][];
             var hits = TypeMethodsHits;
