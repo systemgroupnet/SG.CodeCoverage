@@ -8,10 +8,9 @@ namespace SG.CodeCoverage.Metadata.Coverage
 {
     public class CoverageMethodResult
     {
-        public CoverageMethodResult(string fullName, int index, string source, int startLine, int endLine, int visitCount)
+        public CoverageMethodResult(string fullName, string source, int startLine, int endLine, int visitCount)
         {
             FullName = fullName;
-            Index = index;
             Source = source;
             StartLine = startLine;
             EndLine = endLine;
@@ -19,7 +18,6 @@ namespace SG.CodeCoverage.Metadata.Coverage
         }
 
         public string FullName { get; }
-        public int Index { get; }
         public string Source { get; }
         public int StartLine { get; }
         public int EndLine { get; }

@@ -14,7 +14,6 @@ namespace SG.CodeCoverage.Reports
         {
             return new CoverageMethodResult(
                 method.FullName,
-                method.Index,
                 method.Source,
                 method.StartLine,
                 method.EndLine,
@@ -26,7 +25,6 @@ namespace SG.CodeCoverage.Reports
         {
             return new CoverageTypeResult(
                 type.FullName,
-                type.Index,
                 type.Methods.Select(x => x.ToMethodCoverage(typeHits[x.Index])).ToList().AsReadOnly()
             );
         }

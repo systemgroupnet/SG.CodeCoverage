@@ -8,15 +8,13 @@ namespace SG.CodeCoverage.Metadata.Coverage
 {
     public class CoverageTypeResult
     {
-        public CoverageTypeResult(string fullName, int index, IReadOnlyCollection<CoverageMethodResult> methods)
+        public CoverageTypeResult(string fullName, IReadOnlyCollection<CoverageMethodResult> methods)
         {
             FullName = fullName;
-            Index = index;
             Methods = methods;
         }
 
         public string FullName { get; }
-        public int Index { get; }
 
         public bool IsVisited => Methods.Any(x => x.IsVisited);
 
