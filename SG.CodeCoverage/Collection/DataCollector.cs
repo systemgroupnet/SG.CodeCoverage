@@ -39,6 +39,11 @@ namespace SG.CodeCoverage.Collection
         {
             ValidateFilePath(hitsFile);
             var (uniqueId, hits) = HitsRepository.LoadHits(hitsFile);
+            return GetVisitedFiles(uniqueId, hits);
+        }
+
+        public ISet<string> GetVisitedFiles(Guid uniqueId, int[][] hits)
+        {
             if (uniqueId != _map.UniqueId)
                 throw new Exception($"Hits file's unique id ({uniqueId}) does not match the unique id in the map file ({_map.UniqueId}).");
 
