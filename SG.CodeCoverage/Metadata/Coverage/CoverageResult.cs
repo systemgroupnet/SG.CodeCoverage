@@ -23,6 +23,9 @@ namespace SG.CodeCoverage.Metadata.Coverage
 
         public CoverageResult MergeWith(CoverageResult otherResult)
         {
+            if (otherResult == null)
+                return this;
+
             // Create an anonymous data that holds every paramter we need to construct the coverage result types
             var result = Assemblies.Select(asm => new
                 {
