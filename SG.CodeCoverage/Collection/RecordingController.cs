@@ -46,7 +46,6 @@ namespace SG.CodeCoverage.Collection
         {
             if (_tcpClient != null)
                 _tcpClient.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }
