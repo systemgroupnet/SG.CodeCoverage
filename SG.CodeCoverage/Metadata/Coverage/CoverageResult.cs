@@ -80,7 +80,7 @@ namespace SG.CodeCoverage.Metadata.Coverage
             );
         }
 
-        public static CoverageResult ToCoverageMap(this InstrumentationMap map, int[][] hits)
+        public static CoverageResult ToCoverageResult(this InstrumentationMap map, int[][] hits)
         {
             return new CoverageResult(
                 map.Version,
