@@ -81,6 +81,7 @@
     <Compile Include="Metadata\InstrumentationMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\CoberturaReport.cs" />
+    <Compile Include="Reports\InstrumentToCoverageMapper.cs" />
     <Compile Include="Reports\IReport.cs" />
     <Compile Include="Reports\OpenCoverReport.cs" />
   </ItemGroup>
