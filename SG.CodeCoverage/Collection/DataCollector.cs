@@ -35,10 +35,15 @@ namespace SG.CodeCoverage.Collection
                 return serializer.Deserialize<InstrumentationMap>(reader);
         }
 
-        public ISet<string> GetVisitedFiles(string hitsFile)
+        public (Guid uniqueId, int[][] hits) LoadHits(string hitsFile)
         {
             ValidateFilePath(hitsFile);
-            var (uniqueId, hits) = HitsRepository.LoadHits(hitsFile);
+            return HitsRepository.LoadHits(hitsFile);
+        }
+
+        public ISet<string> GetVisitedFiles(string hitsFile)
+        {
+            var (uniqueId, hits) = LoadHits(hitsFile);
             return GetVisitedFiles(uniqueId, hits);
         }
 
