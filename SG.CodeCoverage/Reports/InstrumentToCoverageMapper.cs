@@ -10,6 +10,30 @@ namespace SG.CodeCoverage.Reports
 {
     public static class InstrumentToCoverageMapper
     {
+        public static CoverageResult ToCoverageResult(this InstrumentationMap map, int[][] hits)
+        {
+            return new CoverageResult(
+                map.Version,
+                map.UniqueId,
+                map.Assemblies.Select(x => x.ToAssemblyCoverage(hits)).ToList().AsReadOnly()
+            );
+        }
+
+        public static CoverageAssemblyResult ToAssemblyCoverage(this InstrumentedAssemblyMap assembly, int[][] hits)
+        {
+            return new CoverageAssemblyResult(
+                assembly.Name,
+                assembly.Types.Select(type => type.ToTypeCoverage(hits[type.Index])).ToList().AsReadOnly()
+            );
+        }
+        public static CoverageTypeResult ToTypeCoverage(this InstrumentedTypeMap type, int[] typeHits)
+        {
+            return new CoverageTypeResult(
+                type.FullName,
+                type.Methods.Select(method => method.ToMethodCoverage(typeHits[method.Index])).ToList().AsReadOnly()
+            );
+        }
+
         public static CoverageMethodResult ToMethodCoverage(this InstrumentedMethodMap method, int visitCount)
         {
             return new CoverageMethodResult(
@@ -18,31 +42,6 @@ namespace SG.CodeCoverage.Reports
                 method.StartLine,
                 method.EndLine,
                 visitCount
-            );
-        }
-
-        public static CoverageTypeResult ToTypeCoverage(this InstrumentedTypeMap type, int[] typeHits)
-        {
-            return new CoverageTypeResult(
-                type.FullName,
-                type.Methods.Select(x => x.ToMethodCoverage(typeHits[x.Index])).ToList().AsReadOnly()
-            );
-        }
-
-        public static CoverageAssemblyResult ToAssemblyCoverage(this InstrumentedAssemblyMap assembly, int[][] hits)
-        {
-            return new CoverageAssemblyResult(
-                assembly.Name,
-                assembly.Types.Select(x => x.ToTypeCoverage(hits[x.Index])).ToList().AsReadOnly()
-            );
-        }
-
-        public static CoverageResult ToCoverageResult(this InstrumentationMap map, int[][] hits)
-        {
-            return new CoverageResult(
-                map.Version,
-                map.UniqueId,
-                map.Assemblies.Select(x => x.ToAssemblyCoverage(hits)).ToList().AsReadOnly()
             );
         }
 
