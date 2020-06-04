@@ -28,9 +28,10 @@ namespace SG.CodeCoverage.Reports
         }
         public static CoverageTypeResult ToTypeCoverage(this InstrumentedTypeMap type, int[] typeHits)
         {
+            int visitCount(int index) => typeHits.Length == 0 ? 0 : typeHits[index];
             return new CoverageTypeResult(
                 type.FullName,
-                type.Methods.Select(method => method.ToMethodCoverage(typeHits[method.Index])).ToList().AsReadOnly()
+                type.Methods.Select(method => method.ToMethodCoverage(visitCount(method.Index))).ToList().AsReadOnly()
             );
         }
 
