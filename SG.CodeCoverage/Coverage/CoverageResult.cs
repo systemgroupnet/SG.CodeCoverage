@@ -239,7 +239,7 @@ namespace SG.CodeCoverage.Coverage
 
         public IEnumerable<string> GetVisitedMethodNames()
         {
-            return GetVisitedMethods().Select(x => x.FullName);
+            return GetVisitedMethods().Select(x => x.FullName).Distinct();
         }
 
         public IEnumerable<string> GetVisitedSources()
