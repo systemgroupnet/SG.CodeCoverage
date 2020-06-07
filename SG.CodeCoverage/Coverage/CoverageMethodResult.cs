@@ -29,8 +29,8 @@ namespace SG.CodeCoverage.Coverage
         public SummaryResult GetLineSummary()
         {
             return new SummaryResult(
-                total: LinesCount,
-                covered: IsVisited ? LinesCount : 0 // Because Line covereage is not enabled yet
+                total: 1,
+                covered: IsVisited ? 1 : 0 // Because Line covereage is not enabled yet
             );
         }
 
