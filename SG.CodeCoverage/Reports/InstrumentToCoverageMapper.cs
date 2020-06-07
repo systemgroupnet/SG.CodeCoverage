@@ -26,6 +26,7 @@ namespace SG.CodeCoverage.Reports
                 assembly.Types.Select(type => type.ToTypeCoverage(hits[type.Index])).ToList().AsReadOnly()
             );
         }
+
         public static CoverageTypeResult ToTypeCoverage(this InstrumentedTypeMap type, int[] typeHits)
         {
             int visitCount(int index) => typeHits.Length == 0 ? 0 : typeHits[index];
