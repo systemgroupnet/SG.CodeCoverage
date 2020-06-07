@@ -1,6 +1,8 @@
-﻿using SG.CodeCoverage.Common;
+﻿using Newtonsoft.Json;
+using SG.CodeCoverage.Common;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace SG.CodeCoverage.Metadata
 {
@@ -16,5 +18,16 @@ namespace SG.CodeCoverage.Metadata
         public VersionInfo Version { get; }
         public Guid UniqueId { get; }
         public IReadOnlyCollection<InstrumentedAssemblyMap> Assemblies { get; }
+
+        public static InstrumentationMap Parse(string mapFilePath)
+        {
+            var serializer = new JsonSerializer()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
+            using (var reader = new JsonTextReader(new StreamReader(mapFilePath)))
+                return serializer.Deserialize<InstrumentationMap>(reader);
+        }
     }
 }

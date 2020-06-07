@@ -61,17 +61,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collection\DataCollector.cs" />
     <Compile Include="Collection\RecordingController.cs" />
     <Compile Include="Common\ConsoleLogger.cs" />
     <Compile Include="Common\ILogger.cs" />
     <Compile Include="Common\VersionInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Metadata\Coverage\CoverageAssemblyResult.cs" />
-    <Compile Include="Metadata\Coverage\CoverageResult.cs" />
-    <Compile Include="Metadata\Coverage\CoverageMethodResult.cs" />
-    <Compile Include="Metadata\Coverage\CoverageTypeResult.cs" />
-    <Compile Include="Metadata\Coverage\SummaryResult.cs" />
+    <Compile Include="Coverage\CoverageAssemblyResult.cs" />
+    <Compile Include="Coverage\CoverageResult.cs" />
+    <Compile Include="Coverage\CoverageMethodResult.cs" />
+    <Compile Include="Coverage\CoverageTypeResult.cs" />
+    <Compile Include="Coverage\SummaryResult.cs" />
     <Compile Include="Metadata\InstrumentedAssemblyMap.cs" />
     <Compile Include="Instrumentation\AssemblyResolver.cs" />
     <Compile Include="Instrumentation\Instrumenter.cs" />
@@ -81,7 +80,6 @@
     <Compile Include="Metadata\InstrumentationMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\CoberturaReport.cs" />
-    <Compile Include="Reports\InstrumentToCoverageMapper.cs" />
     <Compile Include="Reports\IReport.cs" />
     <Compile Include="Reports\OpenCoverReport.cs" />
   </ItemGroup>

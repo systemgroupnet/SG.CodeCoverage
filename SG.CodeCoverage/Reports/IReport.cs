@@ -1,4 +1,4 @@
-﻿using SG.CodeCoverage.Metadata.Coverage;
+﻿using SG.CodeCoverage.Coverage;
 using System;
 using System.Collections.Generic;
 using System.Linq;

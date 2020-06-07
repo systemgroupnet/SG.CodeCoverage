@@ -1,6 +1,7 @@
 using SampleProjectForTest;
 using SG.CodeCoverage.Collection;
 using SG.CodeCoverage.Common;
+using SG.CodeCoverage.Coverage;
 using SG.CodeCoverage.Instrumentation;
 using System;
 using System.Collections.Generic;
@@ -79,14 +80,14 @@ namespace SG.CodeCoverage.Tests
             var res = calc.GetMethod("IsPrime").Invoke(calc.DeclaredConstructors.First().Invoke(null), new object[] { 7 });
         }
 
-        public ISet<string> GetVisitedFiles()
+        public List<string> GetVisitedFiles()
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
             var client = new RecordingController(PortNumber);
             var hitsFile = Path.Combine(OutputPath, "hits.bin");
             client.SaveHitsAndReset(hitsFile);
-            return new DataCollector(MapFilePath).GetVisitedFiles(hitsFile);
+            return new CoverageResult(MapFilePath, hitsFile).GetVisitedSources().ToList();
         }
     }
 }

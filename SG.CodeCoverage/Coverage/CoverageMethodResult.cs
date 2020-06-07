@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SG.CodeCoverage.Metadata.Coverage
+namespace SG.CodeCoverage.Coverage
 {
     public class CoverageMethodResult
     {

@@ -1,14 +1,51 @@
-﻿using SG.CodeCoverage.Common;
+﻿using Newtonsoft.Json;
+using SG.CodeCoverage.Common;
+using SG.CodeCoverage.Metadata;
+using SG.CodeCoverage.Recorder;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SG.CodeCoverage.Metadata.Coverage
+namespace SG.CodeCoverage.Coverage
 {
     public class CoverageResult
     {
+
+        public CoverageResult(string mapPath, string hitsPath)
+        {
+            var map = LoadMapFile(mapPath);
+            var (uniqueId, hits) = LoadHits(hitsPath);
+            if (map.UniqueId != uniqueId)
+                throw new Exception($"Hits file's unique id ({uniqueId}) does not match the unique id in the map file ({map.UniqueId}).");
+
+            Version = map.Version;
+            UniqueId = uniqueId;
+            Assemblies = map.Assemblies.Select(asm => ToAssemblyCoverage(asm, hits)).ToList().AsReadOnly();
+        }
+
+        public CoverageResult(InstrumentationMap map, string hitsPath)
+        {
+            var (uniqueId, hits) = LoadHits(hitsPath);
+            if (map.UniqueId != uniqueId)
+                throw new Exception($"Hits file's unique id ({uniqueId}) does not match the unique id in the map file ({map.UniqueId}).");
+
+            Version = map.Version;
+            UniqueId = uniqueId;
+            Assemblies = map.Assemblies.Select(asm => ToAssemblyCoverage(asm, hits)).ToList().AsReadOnly();
+        }
+
+        public CoverageResult(InstrumentationMap map, int[][] hits, Guid hitsUniqueId)
+        {
+            if (map.UniqueId != hitsUniqueId)
+                throw new Exception($"Hits file's unique id ({hitsUniqueId}) does not match the unique id in the map file ({map.UniqueId}).");
+
+            Version = map.Version;
+            UniqueId = hitsUniqueId;
+            Assemblies = map.Assemblies.Select(asm => ToAssemblyCoverage(asm, hits)).ToList().AsReadOnly();
+        }
 
         public CoverageResult(VersionInfo instrumenterVersion, Guid instrumentUniqueId, IReadOnlyCollection<CoverageAssemblyResult> assemblies)
         {
@@ -20,6 +57,47 @@ namespace SG.CodeCoverage.Metadata.Coverage
         public VersionInfo Version { get; }
         public Guid UniqueId { get; }
         public IReadOnlyCollection<CoverageAssemblyResult> Assemblies { get; }
+
+        private InstrumentationMap LoadMapFile(string mapFilePath)
+        {
+            ValidateFilePath(mapFilePath);
+            return InstrumentationMap.Parse(mapFilePath);
+
+        }
+
+        private (Guid uniqueId, int[][] hits) LoadHits(string hitsFile)
+        {
+            ValidateFilePath(hitsFile);
+            return HitsRepository.LoadHits(hitsFile);
+        }
+
+        private CoverageAssemblyResult ToAssemblyCoverage(InstrumentedAssemblyMap assembly, int[][] hits)
+        {
+            return new CoverageAssemblyResult(
+                assembly.Name,
+                assembly.Types.Select(type => ToTypeCoverage(type, hits[type.Index])).ToList().AsReadOnly()
+            );
+        }
+
+        private CoverageTypeResult ToTypeCoverage(InstrumentedTypeMap type, int[] typeHits)
+        {
+            int visitCount(int index) => typeHits.Length == 0 ? 0 : typeHits[index];
+            return new CoverageTypeResult(
+                type.FullName,
+                type.Methods.Select(method => ToMethodCoverage(method, visitCount(method.Index))).ToList().AsReadOnly()
+            );
+        }
+
+        private CoverageMethodResult ToMethodCoverage(InstrumentedMethodMap method, int visitCount)
+        {
+            return new CoverageMethodResult(
+                method.FullName,
+                method.Source,
+                method.StartLine,
+                method.EndLine,
+                visitCount
+            );
+        }
 
         public CoverageResult MergeWith(CoverageResult otherResult)
         {
@@ -154,6 +232,22 @@ namespace SG.CodeCoverage.Metadata.Coverage
             return Assemblies.SelectMany(x => x.Types).SelectMany(x => x.Methods).Select(x => x.Source).Distinct().ToList();
         }
 
+        public IEnumerable<CoverageMethodResult> GetVisitedMethods()
+        {
+            return Assemblies.SelectMany(x => x.Types).SelectMany(x => x.Methods).Where(x => x.IsVisited);
+        }
+
+        public IEnumerable<string> GetVisitedMethodNames()
+        {
+            return GetVisitedMethods().Select(x => x.FullName);
+        }
+
+        public IEnumerable<string> GetVisitedSources()
+        {
+            return GetVisitedMethods().Select(x => x.Source).Distinct();
+        }
+
+
         public SummaryResult GetLineSummary()
         {
             var result = new SummaryResult(0, 0);
@@ -173,6 +267,12 @@ namespace SG.CodeCoverage.Metadata.Coverage
         public SummaryResult GetBranchSummary()
         {
             return new SummaryResult(0, 0);
+        }
+
+        private void ValidateFilePath(string file)
+        {
+            if (!File.Exists(file))
+                throw new FileNotFoundException($"Could not find the file '{file}'.");
         }
 
     }

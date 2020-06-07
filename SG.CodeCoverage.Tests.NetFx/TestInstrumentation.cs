@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SG.CodeCoverage.Collection;
+using SG.CodeCoverage.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace SG.CodeCoverage.Tests.NetFx
         {
             var tester = new InstrumenterTester();
             tester.InstrumentSampleProject();
-            var map = DataCollector.LoadMapFile(tester.MapFilePath);
+            var map = InstrumentationMap.Parse(tester.MapFilePath);
         }
     }
 }
