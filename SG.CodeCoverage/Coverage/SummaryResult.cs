@@ -12,7 +12,7 @@ namespace SG.CodeCoverage.Coverage
 
         public int Covered { get; }
 
-        public float Percentage => (Covered / (float)Total) * 100;
+        public float Percentage => Total == 0 ? 0 : (Covered / (float)Total) * 100;
 
         public SummaryResult(int total, int covered)
         {
