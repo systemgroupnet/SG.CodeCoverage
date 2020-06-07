@@ -64,6 +64,10 @@ namespace SG.CodeCoverage.Reports
 
                         foreach (var meth in cls.Methods)
                         {
+
+                            if (meth.LinesCount == 0)
+                                continue;
+
                             var methLineSummary = meth.GetLineSummary();
                             var methBranchSummary = meth.GetBranchSummary();
 
