@@ -23,7 +23,7 @@ namespace SG.CodeCoverage.Coverage
         public SummaryResult GetLineSummary()
         {
             return new SummaryResult(
-                total: Methods.Sum(x => x.EndLine - x.StartLine),
+                total: Methods.Sum(x => x.LinesCount),
                 covered: Methods.Sum(x => x.IsVisited ? x.LinesCount : 0)
             );
         }
