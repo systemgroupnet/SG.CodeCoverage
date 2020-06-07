@@ -227,9 +227,9 @@ namespace SG.CodeCoverage.Coverage
                  );
         }
 
-        public List<string> GetSources()
+        public IEnumerable<string> GetSources()
         {
-            return Assemblies.SelectMany(x => x.Types).SelectMany(x => x.Methods).Select(x => x.Source).Distinct().ToList();
+            return Assemblies.SelectMany(x => x.Types).SelectMany(x => x.Methods).Select(x => x.Source).Distinct();
         }
 
         public IEnumerable<CoverageMethodResult> GetVisitedMethods()

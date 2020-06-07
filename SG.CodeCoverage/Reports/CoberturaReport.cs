@@ -29,7 +29,7 @@ namespace SG.CodeCoverage.Reports
             coverage.Add(new XAttribute("timestamp", (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds));
 
             XElement sources = new XElement("sources");
-            var absolutePaths = coverageResult.GetSources();
+            var absolutePaths = coverageResult.GetSources().ToList();
             absolutePaths.ForEach(x => sources.Add(new XElement("source", x)));
 
             XElement packages = new XElement("packages");
