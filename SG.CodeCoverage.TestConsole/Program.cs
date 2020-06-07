@@ -20,11 +20,11 @@ namespace SG.CodeCoverage.TestConsole
             Console.WriteLine(visitedFiles.Count);
         }
 
-        static void InstrumentPath(string dir, string backupFolder, string dllPattern)
+        static void InstrumentPath(string dir, string backupFolder, string filePattern)
         {
             var mapFilePath = Path.Combine(dir, "map.json");
             var filesToInstrument = Directory
-                    .GetFiles(dir, dllPattern)
+                    .GetFiles(dir, filePattern)
                     .ToList();
             var instrumenter = new Instrumenter(filesToInstrument, new[] { dir }, dir, mapFilePath, 12398, null)
             {
