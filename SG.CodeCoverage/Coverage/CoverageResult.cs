@@ -275,5 +275,15 @@ namespace SG.CodeCoverage.Coverage
                 throw new FileNotFoundException($"Could not find the file '{file}'.");
         }
 
+        public static CoverageResult operator +(CoverageResult result1, CoverageResult result2)
+        {
+            return result1.MergeWith(result2);
+        }
+
+        public static CoverageResult Merge(CoverageResult result1, CoverageResult result2)
+        {
+            return result1 + result2;
+        }
+
     }
 }
