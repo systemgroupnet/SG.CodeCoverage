@@ -94,7 +94,9 @@ namespace SG.CodeCoverage.Coverage
                 method.FullName,
                 method.Source,
                 method.StartLine,
+                method.StartColumn,
                 method.EndLine,
+                method.EndColumn,
                 visitCount
             );
         }
@@ -116,7 +118,9 @@ namespace SG.CodeCoverage.Coverage
                             meth.FullName,
                             meth.Source,
                             meth.StartLine,
+                            meth.StartColumn,
                             meth.EndLine,
+                            meth.EndColumn,
                             meth.VisitCount
                         }).ToList()
                     }).ToList()
@@ -142,7 +146,9 @@ namespace SG.CodeCoverage.Coverage
                                 meth.FullName,
                                 meth.Source,
                                 meth.StartLine,
+                                meth.StartColumn,
                                 meth.EndLine,
+                                meth.EndColumn,
                                 meth.VisitCount
                             }).ToList()
                         }).ToList()
@@ -164,7 +170,9 @@ namespace SG.CodeCoverage.Coverage
                                     meth.FullName,
                                     meth.Source,
                                     meth.StartLine,
+                                    meth.StartColumn,
                                     meth.EndLine,
+                                    meth.EndColumn,
                                     meth.VisitCount
                                 }).ToList()
                             });
@@ -183,7 +191,9 @@ namespace SG.CodeCoverage.Coverage
                                         meth.FullName,
                                         meth.Source,
                                         meth.StartLine,
+                                        meth.StartColumn,
                                         meth.EndLine,
+                                        meth.EndColumn,
                                         meth.VisitCount
                                     });
                                 }
@@ -196,7 +206,9 @@ namespace SG.CodeCoverage.Coverage
                                         meth.FullName,
                                         meth.Source,
                                         meth.StartLine,
+                                        meth.StartColumn,
                                         meth.EndLine,
+                                        meth.EndColumn,
                                         VisitCount = meth.VisitCount + targetMethod.VisitCount
                                     });
                                 }
@@ -220,7 +232,9 @@ namespace SG.CodeCoverage.Coverage
                                 meth.FullName,
                                 meth.Source,
                                 meth.StartLine,
+                                meth.StartColumn,
                                 meth.EndLine,
+                                meth.EndColumn,
                                 meth.VisitCount)).ToList().AsReadOnly()
                         )).ToList().AsReadOnly()
                         )).ToList().AsReadOnly()

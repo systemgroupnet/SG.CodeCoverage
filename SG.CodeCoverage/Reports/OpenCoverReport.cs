@@ -107,7 +107,20 @@ namespace SG.CodeCoverage.Reports
                             XElement branchPoints = new XElement("BranchPoints");
                             XElement methodSummary = new XElement("Summary");
 
+                            var branchCoverage = new SummaryResult(0, 0);
 
+                            XElement sequencePoint = new XElement("SequencePoint");
+                            sequencePoint.Add(new XAttribute("vc", meth.VisitCount));
+                            sequencePoint.Add(new XAttribute("uspid", "0"));
+                            sequencePoint.Add(new XAttribute("ordinal", "0"));
+                            sequencePoint.Add(new XAttribute("sl", meth.StartLine));
+                            sequencePoint.Add(new XAttribute("sc", meth.StartColumn));
+                            sequencePoint.Add(new XAttribute("el", meth.EndLine));
+                            sequencePoint.Add(new XAttribute("ec", meth.EndColumn));
+                            sequencePoint.Add(new XAttribute("bec", branchCoverage.Total));
+                            sequencePoint.Add(new XAttribute("bev", branchCoverage.Covered));
+                            sequencePoint.Add(new XAttribute("fileid", i.ToString()));
+                            sequencePoints.Add(sequencePoint);
 
                             numMethods++;
                             if (meth.IsVisited)

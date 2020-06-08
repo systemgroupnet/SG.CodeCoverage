@@ -8,19 +8,23 @@ namespace SG.CodeCoverage.Coverage
 {
     public class CoverageMethodResult
     {
-        public CoverageMethodResult(string fullName, string source, int startLine, int endLine, int visitCount)
+        public CoverageMethodResult(string fullName, string source, int startLine, int startColumn, int endLine, int endColumn, int visitCount)
         {
             FullName = fullName;
             Source = source;
             StartLine = startLine;
+            StartColumn = startColumn;
             EndLine = endLine;
+            EndColumn = endColumn;
             VisitCount = visitCount;
         }
 
         public string FullName { get; }
         public string Source { get; }
         public int StartLine { get; }
+        public int StartColumn { get; set; }
         public int EndLine { get; }
+        public int EndColumn { get; set; }
         public int VisitCount { get; set; }
         public bool IsVisited => VisitCount > 0;
 

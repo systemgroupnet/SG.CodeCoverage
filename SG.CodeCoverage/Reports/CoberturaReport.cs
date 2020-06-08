@@ -77,6 +77,19 @@ namespace SG.CodeCoverage.Reports
                             method.Add(new XAttribute("line-rate", (methLineSummary.Percentage / 100).ToString(CultureInfo.InvariantCulture)));
                             method.Add(new XAttribute("branch-rate", (branchCoverage.Percentage / 100).ToString(CultureInfo.InvariantCulture)));
 
+                            XElement lines = new XElement("lines");
+                            // Add only one line
+                            const bool isBranchPoint = false; // TODO: Check if it's really branch point
+                            XElement line = new XElement("line");
+                            line.Add(new XAttribute("number", meth.StartLine));
+                            line.Add(new XAttribute("hits", meth.VisitCount));
+                            line.Add(new XAttribute("branch", isBranchPoint.ToString()));
+
+                            lines.Add(line);
+                            classLines.Add(line);
+
+
+                            method.Add(lines);
                             methods.Add(method);
                         }
 
