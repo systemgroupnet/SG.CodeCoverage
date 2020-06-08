@@ -59,18 +59,24 @@ namespace SG.CodeCoverage.Instrumentation
                 return null;
 
             var sourceFile = debugInformation.SequencePoints.Select(s => s.Document.Url).FirstOrDefault();
-            var startLine = debugInformation.SequencePoints.FirstOrDefault(x => !x.IsHidden)?.StartLine;
-            var endLine = debugInformation.SequencePoints.LastOrDefault(x => !x.IsHidden)?.EndLine;
+            var sortedSequencePoints = debugInformation.SequencePoints.Where(x => !x.IsHidden).OrderBy(x => x.StartLine);
+            var firstSeqPoint = sortedSequencePoints.FirstOrDefault();
+            var lastSeqpoint = sortedSequencePoints.LastOrDefault();
 
-            if (startLine == null || endLine == null)
+            if (firstSeqPoint == null || lastSeqpoint == null)
                 return null;
+
+            var startLine = firstSeqPoint.StartLine;
+            var startColumn = firstSeqPoint.StartColumn;
+            var endLine = lastSeqpoint.EndLine;
+            var endColumn = lastSeqpoint.EndColumn;
 
             int methodIndex = _currentMethodIndex++;
 
             RemoveAllCalls(methodBody, _addHitMethodRef);
             InjectCall(methodBody, _addHitMethodRef, _index, methodIndex);
 
-            return new InstrumentedMethodMap(method.FullName, methodIndex, sourceFile, startLine.Value, endLine.Value);
+            return new InstrumentedMethodMap(method.FullName, methodIndex, sourceFile, startLine, startColumn, endLine, endColumn);
         }
 
         private void AddInitializerCall(int totalMethods)
