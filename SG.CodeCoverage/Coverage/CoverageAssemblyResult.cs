@@ -65,6 +65,21 @@ namespace SG.CodeCoverage.Coverage
             return new SummaryResult(0, 0);
         }
 
+        public SummaryResult GetMethodSummary()
+        {
+            var result = new SummaryResult(0, 0);
+            foreach (var type in Types)
+            {
+                var current = type.GetMethodSummary();
+                result = new SummaryResult(
+                    total: result.Total + current.Total,
+                    covered: result.Covered + current.Covered
+                );
+            }
+
+            return result;
+        }
+
         public int CalculateCyclomaticComplexity()
         {
             return 0;
