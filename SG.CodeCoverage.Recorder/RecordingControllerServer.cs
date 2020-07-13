@@ -105,7 +105,11 @@ namespace SG.CodeCoverage.Recorder
                 return "ERROR " + result;
             }
             else
-                return "OK " + result;
+            {
+                if(result != null)
+                    return "OK " + result;
+                return "OK";
+            }
         }
 
         private static (string commandName, string parameter) ExtractCommandNameAndParameter(string command)
