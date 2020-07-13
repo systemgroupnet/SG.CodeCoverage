@@ -100,7 +100,10 @@ namespace SG.CodeCoverage.Recorder
                 result = "Command Not Found.";
             }
             if (failed)
+            {
+                _logger.LogError($"Error while processing command '{commandName}': {result}");
                 return "ERROR " + result;
+            }
             else
                 return "OK " + result;
         }
