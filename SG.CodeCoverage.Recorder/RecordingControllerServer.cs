@@ -102,13 +102,14 @@ namespace SG.CodeCoverage.Recorder
             if (failed)
             {
                 _logger.LogError($"Error while processing command '{commandName}': {result}");
-                return "ERROR " + result;
+                return Constants.CommandErrorResponse + " " + result;
             }
             else
             {
+                var ok = Constants.CommandOkResponse;
                 if(result != null)
-                    return "OK " + result;
-                return "OK";
+                    return ok + " " + result;
+                return ok;
             }
         }
 

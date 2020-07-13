@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SG.CodeCoverage.Recorder;
+using System;
 using System.IO;
 using System.Net.Sockets;
 
@@ -9,8 +10,6 @@ namespace SG.CodeCoverage.Collection
         public string Host { get; }
         public int PortNumber { get; }
         private TcpClient _tcpClient;
-        private const string OkResponse = "OK";
-        private const string ErrorResponse = "ERROR";
 
         public RecordingController(int portNumber)
             : this("localhost", portNumber)
@@ -38,12 +37,12 @@ namespace SG.CodeCoverage.Collection
                 writer.Flush();
                 result = new BinaryReader(nstream).ReadString().Trim();
             }
-            if (!result.Equals(OkResponse, StringComparison.OrdinalIgnoreCase))
+            if (!result.Equals(Constants.CommandOkResponse, StringComparison.OrdinalIgnoreCase))
             {
-                if (result.StartsWith(ErrorResponse, StringComparison.OrdinalIgnoreCase))
+                if (result.StartsWith(Constants.CommandErrorResponse, StringComparison.OrdinalIgnoreCase))
                     throw new Exception(
                         "An error occurred in the recorder while saving hits file. The error was:\r\n" +
-                        result.Substring(ErrorResponse.Length).Trim());
+                        result.Substring(Constants.CommandErrorResponse.Length).Trim());
                 else
                     throw new Exception("Unknown response:\r\n" + result);
             }
