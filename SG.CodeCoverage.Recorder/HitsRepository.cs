@@ -69,6 +69,19 @@ namespace SG.CodeCoverage.Recorder
             }
         }
 
+        public static void ResetHits()
+        {
+            lock (TypeMethodsHits)
+            {
+                for (int i = 0; i < InjectedConstants.TypesCount; i++)
+                {
+                    var hits = TypeMethodsHits[i];
+                    if (hits != null)
+                        Array.Clear(hits, 0, hits.Length);
+                }
+            }
+        }
+
         public static (Guid uniqueId, int[][]) LoadHits(string hitsFilePath)
         {
             using (var fs = new FileStream(hitsFilePath, FileMode.Open))
@@ -85,7 +98,7 @@ namespace SG.CodeCoverage.Recorder
                     var methodsCount = br.ReadInt32();
                     ulong sum = 0;
                     var typeHits = hits[typeIndex] = new int[methodsCount];
-                    for(int methodIndex = 0; methodIndex < methodsCount; methodIndex++)
+                    for (int methodIndex = 0; methodIndex < methodsCount; methodIndex++)
                         sum += (ulong)(typeHits[methodIndex] = br.ReadInt32());
                     var storedSum = br.ReadUInt64();
                     if (storedSum != sum)

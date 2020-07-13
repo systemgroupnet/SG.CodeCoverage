@@ -19,7 +19,8 @@ namespace SG.CodeCoverage.Recorder
             _logger = logger;
             _commands = new Dictionary<string, Func<string, string>>()
             {
-                ["save"] = SaveAndReset
+                [Constants.SaveCommand] = SaveAndReset,
+                [Constants.ResetCommand] = Reset
             };
             _listeningTask = StartAsync(InjectedConstants.ControllerServerPort);
         }
@@ -133,6 +134,12 @@ namespace SG.CodeCoverage.Recorder
         private string SaveAndReset(string fileName)
         {
             HitsRepository.SaveAndResetHits(fileName);
+            return null;
+        }
+
+        private string Reset(string notUsedParam)
+        {
+            HitsRepository.ResetHits();
             return null;
         }
     }

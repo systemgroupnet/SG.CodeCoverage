@@ -8,5 +8,7 @@ namespace SG.CodeCoverage.Recorder
     {
         public const string CommandOkResponse = "OK";
         public const string CommandErrorResponse = "ERROR";
+        public const string SaveCommand = "save";
+        public const string ResetCommand = "reset";
     }
 }
