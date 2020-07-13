@@ -6,13 +6,20 @@ namespace SG.CodeCoverage.Collection
 {
     public sealed class RecordingController : IDisposable
     {
+        public string Host { get; }
         public int PortNumber { get; }
         private TcpClient _tcpClient;
         private const string OkResponse = "OK";
         private const string ErrorResponse = "ERROR";
 
         public RecordingController(int portNumber)
+            : this("localhost", portNumber)
         {
+        }
+
+        public RecordingController(string host, int portNumber)
+        {
+            Host = host;
             PortNumber = portNumber;
         }
 
@@ -21,7 +28,7 @@ namespace SG.CodeCoverage.Collection
             if (_tcpClient == null)
                 _tcpClient = new TcpClient();
             if (!_tcpClient.Connected)
-                _tcpClient.Connect("localhost", PortNumber);
+                _tcpClient.Connect(Host, PortNumber);
 
             string result;
             using (var nstream = _tcpClient.GetStream())
