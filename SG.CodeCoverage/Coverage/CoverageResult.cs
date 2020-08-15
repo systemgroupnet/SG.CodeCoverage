@@ -156,7 +156,7 @@ namespace SG.CodeCoverage.Coverage
                 } else
                 {
                     // Assembly is already present, check for types
-                    foreach(var type in targetAssembly.Types)
+                    foreach(var type in asm.Types)
                     {
                         var targetType = targetAssembly.Types.Find(a => a.FullName == type.FullName);
                         if (targetType == null)
@@ -180,7 +180,7 @@ namespace SG.CodeCoverage.Coverage
                         else
                         {
                             // Type is already present, check for methods
-                            foreach(var meth in targetType.Methods)
+                            foreach(var meth in type.Methods)
                             {
                                 var targetMethod = targetType.Methods.Find(a => a.FullName == meth.FullName);
                                 if(targetMethod == null)
