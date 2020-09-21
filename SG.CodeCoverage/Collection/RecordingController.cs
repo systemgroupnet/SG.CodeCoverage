@@ -10,16 +10,18 @@ namespace SG.CodeCoverage.Collection
         public string Host { get; }
         public int PortNumber { get; }
         private TcpClient _tcpClient;
+        public int ConnectionTimeoutSeconds { get; set; }
 
         public RecordingController(int portNumber)
             : this("localhost", portNumber)
         {
         }
 
-        public RecordingController(string host, int portNumber)
+        public RecordingController(string host, int portNumber, int connectionTimeoutSeconds = 10)
         {
             Host = host;
             PortNumber = portNumber;
+            ConnectionTimeoutSeconds = connectionTimeoutSeconds;
         }
 
         public void SaveHitsAndReset(string outputHitsFilePath)
@@ -47,7 +49,8 @@ namespace SG.CodeCoverage.Collection
             if (_tcpClient == null)
                 _tcpClient = new TcpClient();
             if (!_tcpClient.Connected)
-                _tcpClient.Connect(Host, PortNumber);
+                if (!_tcpClient.ConnectAsync(Host, PortNumber).Wait(ConnectionTimeoutSeconds * 1000))
+                    throw new TimeoutException($"Cannot connect to '{Host}:{PortNumber}'. Connection timed out.");
 
             string result;
             using (var nstream = _tcpClient.GetStream())
