@@ -13,6 +13,7 @@ namespace SG.CodeCoverage.Recorder.RecordingController
         private readonly ILogger _logger;
         private static Server _instance;
         private readonly Task _listeningTask;
+        public int Port { get; private set; }
 
         public Server(ILogger logger)
         {
@@ -27,7 +28,7 @@ namespace SG.CodeCoverage.Recorder.RecordingController
 
         public static void Initialize()
         {
-            if (InjectedConstants.ControllerServerPort == 0)
+            if (InjectedConstants.ControllerServerPort == -1)
                 return;
             string logFileName = InjectedConstants.RecorderLogFileName;
             _instance = new Server(new SimpleFileLogger(logFileName));
@@ -39,7 +40,9 @@ namespace SG.CodeCoverage.Recorder.RecordingController
             {
                 var listener = new TcpListener(IPAddress.Any, port);
                 listener.Start();
-                _logger.LogInformation("Started listening on port " + port + ".");
+                this.Port = ((IPEndPoint)listener.LocalEndpoint).Port;
+                _logger.LogInformation("Started listening on port " + this.Port + ".");
+                RunTimeConfig.Update(this.Port);
                 try
                 {
                     while (true)

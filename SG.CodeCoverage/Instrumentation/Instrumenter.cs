@@ -55,9 +55,6 @@ namespace SG.CodeCoverage.Instrumentation
             };
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="logger"></param>
         public Instrumenter(
             InstrumentationOptions options,
             ILogger logger)
@@ -221,6 +218,16 @@ namespace SG.CodeCoverage.Instrumentation
                         instructions,
                         nameof(Recorder.InjectedConstants.RecorderLogFileName),
                         RecorderLogFilePath);
+
+                ChangeFieldSetterLoadedValue(
+                    instructions,
+                    nameof(Recorder.InjectedConstants.RuntimeConfigFileName),
+                    Options.RuntimeConfigFileName);
+
+                ChangeFieldSetterLoadedValue(
+                    instructions,
+                    nameof(Recorder.InjectedConstants.RuntimeConfigOutputPath),
+                    Options.RuntimeConfigOutputPath);
 
                 asm.Write(_writerParams);
             }
