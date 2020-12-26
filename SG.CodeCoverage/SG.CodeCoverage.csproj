@@ -71,6 +71,7 @@
     <Compile Include="Coverage\CoverageMethodResult.cs" />
     <Compile Include="Coverage\CoverageTypeResult.cs" />
     <Compile Include="Coverage\SummaryResult.cs" />
+    <Compile Include="Instrumentation\InstrumentationOptions.cs" />
     <Compile Include="Metadata\InstrumentedAssemblyMap.cs" />
     <Compile Include="Instrumentation\AssemblyResolver.cs" />
     <Compile Include="Instrumentation\Instrumenter.cs" />

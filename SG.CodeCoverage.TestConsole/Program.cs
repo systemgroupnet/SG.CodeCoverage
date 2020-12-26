@@ -26,7 +26,8 @@ namespace SG.CodeCoverage.TestConsole
             var filesToInstrument = Directory
                     .GetFiles(dir, filePattern)
                     .ToList();
-            var instrumenter = new Instrumenter(filesToInstrument, new[] { dir }, dir, mapFilePath, 12398, null)
+            var options = new InstrumentationOptions(filesToInstrument, new[] { dir }, dir, 12398);
+            var instrumenter = new Instrumenter(options, mapFilePath, null)
             {
                 BackupFolder = backupFolder,
                 RecorderLogFilePath = Path.Combine(dir, "CodeCoverageRecorderLog.txt")
