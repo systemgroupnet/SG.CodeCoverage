@@ -5,16 +5,16 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace SG.CodeCoverage.Recorder
+namespace SG.CodeCoverage.Recorder.RecordingController
 {
-    public class RecordingControllerServer
+    public class Server
     {
         private readonly Dictionary<string, Func<string, string>> _commands;
         private readonly ILogger _logger;
-        private static RecordingControllerServer _instance;
+        private static Server _instance;
         private readonly Task _listeningTask;
 
-        public RecordingControllerServer(ILogger logger)
+        public Server(ILogger logger)
         {
             _logger = logger;
             _commands = new Dictionary<string, Func<string, string>>()
@@ -30,7 +30,7 @@ namespace SG.CodeCoverage.Recorder
             if (InjectedConstants.ControllerServerPort == 0)
                 return;
             string logFileName = InjectedConstants.RecorderLogFileName;
-            _instance = new RecordingControllerServer(new SimpleFileLogger(logFileName));
+            _instance = new Server(new SimpleFileLogger(logFileName));
         }
 
         public async Task StartAsync(int port)
@@ -108,7 +108,7 @@ namespace SG.CodeCoverage.Recorder
             else
             {
                 var ok = Constants.CommandOkResponse;
-                if(result != null)
+                if (result != null)
                     return ok + " " + result;
                 return ok;
             }

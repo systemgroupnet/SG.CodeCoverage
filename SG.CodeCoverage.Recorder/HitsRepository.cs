@@ -10,7 +10,7 @@ namespace SG.CodeCoverage.Recorder
 
         static HitsRepository()
         {
-            RecordingControllerServer.Initialize();
+            RecordingController.Server.Initialize();
         }
 
         /// <summary>
