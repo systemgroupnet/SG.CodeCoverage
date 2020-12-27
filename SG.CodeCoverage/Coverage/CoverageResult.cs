@@ -68,7 +68,7 @@ namespace SG.CodeCoverage.Coverage
         private (Guid uniqueId, int[][] hits) LoadHits(string hitsFile)
         {
             ValidateFilePath(hitsFile);
-            return HitsRepository.LoadHits(hitsFile);
+            return HitsFileUtils.LoadHits(hitsFile);
         }
 
         private CoverageAssemblyResult ToAssemblyCoverage(InstrumentedAssemblyMap assembly, int[][] hits)
