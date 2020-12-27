@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SG.CodeCoverage.Recorder
+namespace SG.CodeCoverage.Instrumentation
 {
     [AttributeUsage(AttributeTargets.Assembly)]
     public sealed class InstrumentationUniqueIdAttribute : Attribute
