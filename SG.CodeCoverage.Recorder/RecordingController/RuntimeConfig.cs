@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SG.CodeCoverage.Recorder.RecordingController
 {
-    public class RunTimeConfig
+    public class RuntimeConfig
     {
         public List<RunningProcess> Processes { get; set; }
 
@@ -55,7 +55,7 @@ namespace SG.CodeCoverage.Recorder.RecordingController
             }
         }
 
-        public static RunTimeConfig Load(string fileName)
+        public static RuntimeConfig Load(string fileName)
         {
             List<RunningProcess> processes = new List<RunningProcess>();
             using (var reader = new StreamReader(fileName))
@@ -76,7 +76,7 @@ namespace SG.CodeCoverage.Recorder.RecordingController
                 }
             }
 
-            var r = new RunTimeConfig() { Processes = processes };
+            var r = new RuntimeConfig() { Processes = processes };
             r.Cleanup();
             return r;
         }

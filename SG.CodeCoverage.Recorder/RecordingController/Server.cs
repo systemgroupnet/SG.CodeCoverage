@@ -42,7 +42,7 @@ namespace SG.CodeCoverage.Recorder.RecordingController
                 listener.Start();
                 this.Port = ((IPEndPoint)listener.LocalEndpoint).Port;
                 _logger.LogInformation("Started listening on port " + this.Port + ".");
-                RunTimeConfig.Update(this.Port);
+                RuntimeConfig.Update(this.Port);
                 try
                 {
                     while (true)
