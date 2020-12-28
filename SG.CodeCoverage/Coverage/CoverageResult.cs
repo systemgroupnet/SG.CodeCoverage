@@ -13,38 +13,26 @@ namespace SG.CodeCoverage.Coverage
 {
     public class CoverageResult
     {
+        public VersionInfo Version { get; private set; }
+        public Guid UniqueId { get; private set; }
+        public IReadOnlyCollection<CoverageAssemblyResult> Assemblies { get; private set; }
 
         public CoverageResult(string mapPath, string hitsPath)
         {
             var map = LoadMapFile(mapPath);
             var (uniqueId, hits) = LoadHits(hitsPath);
-            if (map.UniqueId != uniqueId)
-                throw new Exception($"Hits file's unique id ({uniqueId}) does not match the unique id in the map file ({map.UniqueId}).");
-
-            Version = map.Version;
-            UniqueId = uniqueId;
-            Assemblies = map.Assemblies.Select(asm => ToAssemblyCoverage(asm, hits)).ToList().AsReadOnly();
+            Init(map, uniqueId, hits);
         }
 
         public CoverageResult(InstrumentationMap map, string hitsPath)
         {
             var (uniqueId, hits) = LoadHits(hitsPath);
-            if (map.UniqueId != uniqueId)
-                throw new Exception($"Hits file's unique id ({uniqueId}) does not match the unique id in the map file ({map.UniqueId}).");
-
-            Version = map.Version;
-            UniqueId = uniqueId;
-            Assemblies = map.Assemblies.Select(asm => ToAssemblyCoverage(asm, hits)).ToList().AsReadOnly();
+            Init(map, uniqueId, hits);
         }
 
         public CoverageResult(InstrumentationMap map, int[][] hits, Guid hitsUniqueId)
         {
-            if (map.UniqueId != hitsUniqueId)
-                throw new Exception($"Hits file's unique id ({hitsUniqueId}) does not match the unique id in the map file ({map.UniqueId}).");
-
-            Version = map.Version;
-            UniqueId = hitsUniqueId;
-            Assemblies = map.Assemblies.Select(asm => ToAssemblyCoverage(asm, hits)).ToList().AsReadOnly();
+            Init(map, hitsUniqueId, hits);
         }
 
         public CoverageResult(VersionInfo instrumenterVersion, Guid instrumentUniqueId, IReadOnlyCollection<CoverageAssemblyResult> assemblies)
@@ -54,15 +42,20 @@ namespace SG.CodeCoverage.Coverage
             Assemblies = assemblies;
         }
 
-        public VersionInfo Version { get; }
-        public Guid UniqueId { get; }
-        public IReadOnlyCollection<CoverageAssemblyResult> Assemblies { get; }
+        private void Init(InstrumentationMap map, Guid uniqueId, int[][] hits)
+        {
+            if (map.UniqueId != uniqueId)
+                throw new Exception($"Hits file's unique id ({uniqueId}) does not match the unique id in the map file ({map.UniqueId}).");
+
+            Version = map.Version;
+            UniqueId = uniqueId;
+            Assemblies = map.Assemblies.Select(asm => ToAssemblyCoverage(asm, hits)).ToList().AsReadOnly();
+        }
 
         private InstrumentationMap LoadMapFile(string mapFilePath)
         {
             ValidateFilePath(mapFilePath);
             return InstrumentationMap.Parse(mapFilePath);
-
         }
 
         private (Guid uniqueId, int[][] hits) LoadHits(string hitsFile)
