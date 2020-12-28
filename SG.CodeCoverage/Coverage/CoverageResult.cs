@@ -106,7 +106,7 @@ namespace SG.CodeCoverage.Coverage
             if (otherResult == null)
                 return this;
 
-            // Create an anonymous data that holds every paramter we need to construct the coverage result types
+            // Create an anonymous data that holds every parameter we need to construct the coverage result types
             var result = Assemblies.Select(asm => new
                 {
                     asm.Name,
