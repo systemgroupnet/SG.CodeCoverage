@@ -12,18 +12,6 @@ namespace SG.CodeCoverage.Recorder.RecordingController
     {
         public List<RunningProcess> Processes { get; set; }
 
-        public class RunningProcess
-        {
-            public RunningProcess(int iD, int listeningPort)
-            {
-                ID = iD;
-                ListeningPort = listeningPort;
-            }
-
-            public int ID { get; }
-            public int ListeningPort { get; }
-        }
-
         public static string GetDefaultFileName()
         {
             var path = InjectedConstants.RuntimeConfigOutputPath;
@@ -41,7 +29,9 @@ namespace SG.CodeCoverage.Recorder.RecordingController
         {
             var path = GetDefaultFileName();
             var runtimeConfig = Load(path);
-            runtimeConfig.Processes.Add(new RunningProcess(Process.GetCurrentProcess().Id, port));
+            var id = Process.GetCurrentProcess().Id;
+            runtimeConfig.Processes.RemoveAll(p => p.ID == id);
+            runtimeConfig.Processes.Add(new RunningProcess(id, port));
             runtimeConfig.Save(path);
         }
 
@@ -92,6 +82,18 @@ namespace SG.CodeCoverage.Recorder.RecordingController
         private static void ThrowInvalidFormat()
         {
             throw new Exception("Invalid file format.");
+        }
+
+        public class RunningProcess
+        {
+            public RunningProcess(int iD, int listeningPort)
+            {
+                ID = iD;
+                ListeningPort = listeningPort;
+            }
+
+            public int ID { get; }
+            public int ListeningPort { get; }
         }
     }
 }
