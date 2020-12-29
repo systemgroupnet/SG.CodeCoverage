@@ -3,6 +3,7 @@ using SG.CodeCoverage.Collection;
 using SG.CodeCoverage.Common;
 using SG.CodeCoverage.Coverage;
 using SG.CodeCoverage.Instrumentation;
+using SG.CodeCoverage.Metadata;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,10 +15,10 @@ namespace SG.CodeCoverage.Tests
     public class InstrumenterTester
     {
         public const int PortNumber = 61238;
-        public const string MapFileName = "map.json";
         public static string DefaultOutputPath { get; }
         public string OutputPath { get; }
         public string MapFilePath { get; }
+        public InstrumentationMap Map { get; private set; }
         public string InstrumentedAssemblyPath { get; private set; }
 
         static InstrumenterTester()
@@ -28,13 +29,11 @@ namespace SG.CodeCoverage.Tests
         public InstrumenterTester()
         {
             OutputPath = DefaultOutputPath;
-            MapFilePath = Path.Combine(OutputPath, MapFileName);
         }
 
         public InstrumenterTester(string existingInstrumentedSampleFolder)
         {
             OutputPath = existingInstrumentedSampleFolder;
-            MapFilePath = Path.Combine(OutputPath, MapFileName);
             InstrumentedAssemblyPath = Path.Combine(OutputPath, Path.GetFileName(typeof(PrimeCalculator).Assembly.Location));
         }
 
@@ -56,10 +55,10 @@ namespace SG.CodeCoverage.Tests
             var options = new InstrumentationOptions(
                 new[] { assemblyFileName },
                 Array.Empty<string>(), OutputPath, PortNumber);
-            Instrumenter instrumenter = new Instrumenter(options, MapFilePath, new ConsoleLogger());
+            Instrumenter instrumenter = new Instrumenter(options, new ConsoleLogger());
             instrumenter.BackupFolder = Path.Combine(OutputPath, "backup");
             Directory.CreateDirectory(instrumenter.BackupFolder);
-            instrumenter.Instrument();
+            Map = instrumenter.Instrument();
             InstrumentedAssemblyPath = assemblyFileName;
         }
 
@@ -75,7 +74,7 @@ namespace SG.CodeCoverage.Tests
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
-            var client = new Collection.RecordingController(PortNumber);
+            var client = RecordingController.ForEndPoint("localhost", PortNumber, Map);
             Assembly.LoadFrom(Path.Combine(OutputPath, "SG.CodeCoverage.Recorder.dll"));
             var assembly = Assembly.LoadFrom(InstrumentedAssemblyPath);
             var calc = assembly.DefinedTypes.Where(x => x.Name == nameof(PrimeCalculator)).FirstOrDefault();
@@ -86,10 +85,8 @@ namespace SG.CodeCoverage.Tests
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
-            var client = new RecordingController(PortNumber);
-            var hitsFile = Path.Combine(OutputPath, "hits.bin");
-            client.SaveHitsAndReset(hitsFile);
-            return new CoverageResult(MapFilePath, hitsFile).GetVisitedSources().ToList();
+            var client = RecordingController.ForEndPoint("localhost", PortNumber, Map);
+            return client.CollectResultAndReset().GetVisitedSources().ToList(); ;
         }
     }
 }

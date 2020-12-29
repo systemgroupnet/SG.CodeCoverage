@@ -30,9 +30,9 @@ namespace SG.CodeCoverage.Coverage
             Init(map, uniqueId, hits);
         }
 
-        public CoverageResult(InstrumentationMap map, int[][] hits, Guid hitsUniqueId)
+        public CoverageResult(InstrumentationMap map, int[][] hits)
         {
-            Init(map, hitsUniqueId, hits);
+            Init(map, map.UniqueId, hits);
         }
 
         public CoverageResult(VersionInfo instrumenterVersion, Guid instrumentUniqueId, IReadOnlyCollection<CoverageAssemblyResult> assemblies)

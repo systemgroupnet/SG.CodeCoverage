@@ -61,7 +61,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collection\IRecordingController.cs" />
+    <Compile Include="Collection\MultiRecordingController.cs" />
+    <Compile Include="Collection\RecordingControllerClient.cs" />
     <Compile Include="Collection\RecordingController.cs" />
+    <Compile Include="Collection\SingleRecordingController.cs" />
     <Compile Include="Common\ConsoleLogger.cs" />
     <Compile Include="Common\ILogger.cs" />
     <Compile Include="Common\VersionInfo.cs" />
