@@ -10,7 +10,7 @@ namespace SG.CodeCoverage.Recorder.RecordingController
 {
     public class RuntimeConfig
     {
-        public List<RunningProcess> Processes { get; set; }
+        public List<RunningProcess> Processes { get; set; } = new List<RunningProcess>();
 
         public static string GetDefaultFileName()
         {
@@ -28,7 +28,11 @@ namespace SG.CodeCoverage.Recorder.RecordingController
         public static void Update(int port)
         {
             var path = GetDefaultFileName();
-            var runtimeConfig = Load(path);
+            RuntimeConfig runtimeConfig;
+            if (File.Exists(path))
+                runtimeConfig = Load(path);
+            else
+                runtimeConfig = new RuntimeConfig();
             var id = Process.GetCurrentProcess().Id;
             runtimeConfig.Processes.RemoveAll(p => p.ID == id);
             runtimeConfig.Processes.Add(new RunningProcess(id, port));
