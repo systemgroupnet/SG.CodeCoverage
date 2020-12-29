@@ -20,21 +20,24 @@ namespace SG.CodeCoverage.Tests
         public string MapFilePath { get; }
         public InstrumentationMap Map { get; private set; }
         public string InstrumentedAssemblyPath { get; private set; }
+        private readonly ILogger _logger;
 
         static InstrumenterTester()
         {
             DefaultOutputPath = Path.Combine(Path.GetTempPath(), "SG.CodeCoverage");
         }
 
-        public InstrumenterTester()
+        public InstrumenterTester(ILogger logger = null)
         {
             OutputPath = DefaultOutputPath;
+            _logger = logger ?? new ConsoleLogger();
         }
 
-        public InstrumenterTester(string existingInstrumentedSampleFolder)
+        public InstrumenterTester(string existingInstrumentedSampleFolder, ILogger logger = null)
         {
             OutputPath = existingInstrumentedSampleFolder;
             InstrumentedAssemblyPath = Path.Combine(OutputPath, Path.GetFileName(typeof(PrimeCalculator).Assembly.Location));
+            _logger = logger ?? new ConsoleLogger();
         }
 
         public void InstrumentSampleProject()
@@ -55,7 +58,7 @@ namespace SG.CodeCoverage.Tests
             var options = new InstrumentationOptions(
                 new[] { assemblyFileName },
                 Array.Empty<string>(), OutputPath, PortNumber);
-            Instrumenter instrumenter = new Instrumenter(options, new ConsoleLogger());
+            Instrumenter instrumenter = new Instrumenter(options, _logger);
             instrumenter.BackupFolder = Path.Combine(OutputPath, "backup");
             Directory.CreateDirectory(instrumenter.BackupFolder);
             Map = instrumenter.Instrument();
@@ -74,7 +77,7 @@ namespace SG.CodeCoverage.Tests
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
-            var client = RecordingController.ForEndPoint("localhost", PortNumber, Map);
+            var client = RecordingController.ForEndPoint("localhost", PortNumber, Map, _logger);
             Assembly.LoadFrom(Path.Combine(OutputPath, "SG.CodeCoverage.Recorder.dll"));
             var assembly = Assembly.LoadFrom(InstrumentedAssemblyPath);
             var calc = assembly.DefinedTypes.Where(x => x.Name == nameof(PrimeCalculator)).FirstOrDefault();
@@ -85,7 +88,7 @@ namespace SG.CodeCoverage.Tests
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
-            var client = RecordingController.ForEndPoint("localhost", PortNumber, Map);
+            var client = RecordingController.ForEndPoint("localhost", PortNumber, Map, _logger);
             return client.CollectResultAndReset().GetVisitedSources().ToList(); ;
         }
     }

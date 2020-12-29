@@ -1,17 +1,18 @@
-﻿using SG.CodeCoverage.Metadata;
+﻿using SG.CodeCoverage.Common;
+using SG.CodeCoverage.Metadata;
 
 namespace SG.CodeCoverage.Collection
 {
     public static class RecordingController
     {
-        public static IRecordingController ForRuntimeConfigFile(string runtimeConfigFilePath, InstrumentationMap map)
+        public static IRecordingController ForRuntimeConfigFile(string runtimeConfigFilePath, InstrumentationMap map, ILogger logger)
         {
-            return new MultiRecordingController(runtimeConfigFilePath, map);
+            return new MultiRecordingController(runtimeConfigFilePath, map, logger);
         }
 
-        public static IRecordingController ForEndPoint(string host, int port, InstrumentationMap map)
+        public static IRecordingController ForEndPoint(string host, int port, InstrumentationMap map, ILogger logger)
         {
-            return new SingleRecordingController(host, port, map);
+            return new SingleRecordingController(host, port, map, logger);
         }
     }
 }
