@@ -21,7 +21,7 @@
         /// </summary>
         public static readonly string RuntimeConfigFileName = "CodeCoverageRecorderRuntimeConfig.cfg";
         /// <summary>
-        /// The path to store the RuntimeConfig file. If the path is null or empty,the file
+        /// The path to store the RuntimeConfig file. If the path is null or empty, the file
         /// will be stored in the path that the Recorder assembly (this assembly) is loaded from.
         /// </summary>
         public static readonly string RuntimeConfigOutputPath = "";

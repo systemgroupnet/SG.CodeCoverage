@@ -39,6 +39,8 @@ namespace SG.CodeCoverage.Instrumentation
             ControllerPortNumber = controllerPortNumber;
         }
 
+        public static readonly string DefaultRuntimeConfigFileName = InjectedConstants.RuntimeConfigFileName;
+
         /// <summary>
         /// Full path of the assemblies to instrument.
         /// </summary>
@@ -64,7 +66,7 @@ namespace SG.CodeCoverage.Instrumentation
         /// Name of the Runtime Config file. Used to store listening port of the controller server.
         /// Default value: "CodeCoverageRecorderRuntimeConfig.cfg"
         /// </summary>
-        public string RuntimeConfigFileName { get; set; } = InjectedConstants.RuntimeConfigFileName;
+        public string RuntimeConfigFileName { get; set; } = DefaultRuntimeConfigFileName;
         /// <summary>
         /// Path to store Runtime Config file.
         /// If not specified or empty, the file will be stored in the same directory as where the recorder assembly
