@@ -11,7 +11,7 @@ namespace SG.CodeCoverage.TestConsole
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var tester = new InstrumenterTester();
             tester.InstrumentSampleProject();

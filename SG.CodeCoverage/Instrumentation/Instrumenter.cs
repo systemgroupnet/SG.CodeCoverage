@@ -16,18 +16,13 @@ namespace SG.CodeCoverage.Instrumentation
         private readonly ILogger _logger;
         private readonly ReaderParameters _readerParams;
         private readonly WriterParameters _writerParams;
-        private static readonly string _delegateBaseTypeFullName;
+        private static readonly string _delegateBaseTypeFullName = typeof(MulticastDelegate).FullName;
 
         public InstrumentationOptions Options { get; }
         public string OutputMapFilePath { get; }
         public string BackupFolder { get; set; }
         public Guid UniqueId { get; private set; }
         public string RecorderLogFilePath { get; set; }
-
-        static Instrumenter()
-        {
-            _delegateBaseTypeFullName = typeof(MulticastDelegate).FullName;
-        }
 
         /// <summary>
         /// </summary>
