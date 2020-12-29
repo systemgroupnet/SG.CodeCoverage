@@ -154,7 +154,7 @@ namespace SG.CodeCoverage.Instrumentation
         private void AddUniqueIdAssemblyAttribute(AssemblyDefinition assembly)
         {
             var module = assembly.MainModule;
-            var attribType = typeof(InstrumentationUniqueIdAttribute);
+            var attribType = typeof(Recorder.InstrumentationUniqueIdAttribute);
             var attribTypeRef = module.ImportReference(attribType);
             var attrib = assembly.CustomAttributes.FirstOrDefault(a => a.AttributeType == attribTypeRef);
             var attribArgument = new CustomAttributeArgument(module.ImportReference(typeof(string)), UniqueId.ToString());
