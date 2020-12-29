@@ -24,10 +24,6 @@ namespace SG.CodeCoverage.Instrumentation
         public Guid UniqueId { get; private set; }
         public string RecorderLogFilePath { get; set; }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="outputMapFilePath">The path to the output map file (optional)</param>
-        /// <param name="logger"></param>
         public Instrumenter(
             InstrumentationOptions options,
             string outputMapFilePath,
