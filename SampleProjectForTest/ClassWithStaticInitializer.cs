@@ -16,7 +16,7 @@ namespace SampleProjectForTest
             Console.WriteLine("constructor");
         }
 
-        public void PringAssemblyLocation()
+        public void PrintAssemblyLocation()
         {
             Console.WriteLine(AssemblyLocation.Value);
         }

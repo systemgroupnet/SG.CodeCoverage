@@ -10,15 +10,29 @@ namespace SampleProjectForTest
     {
         public bool IsPrime(long number)
         {
-            var sqrt = Math.Sqrt(number);
-            if (number < 2)
+            if (IsLessThan2(number))
                 return false;
             if (number == 2)
                 return true;
-            for (int i = 3; i <= sqrt; i++)
+            var up = GetUpperBound(number);
+            for (int i = 2; i <= up; i++)
                 if (number % i == 0)
                     return false;
+
+            var value = new SampleStruct(4);
+            value.Multiply(3);
+
             return true;
+        }
+
+        private static bool IsLessThan2(long number)
+        {
+            return number < 2;
+        }
+
+        private long GetUpperBound(long number)
+        {
+            return (long)Math.Ceiling(Math.Sqrt(number));
         }
     }
 }

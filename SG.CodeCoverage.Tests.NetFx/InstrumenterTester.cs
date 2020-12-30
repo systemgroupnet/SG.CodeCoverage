@@ -6,9 +6,12 @@ using SG.CodeCoverage.Instrumentation;
 using SG.CodeCoverage.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading;
 
 namespace SG.CodeCoverage.Tests
 {
@@ -21,6 +24,8 @@ namespace SG.CodeCoverage.Tests
         public IRecordingController RecordingController { get; private set; }
         public string InstrumentedAssemblyPath { get; private set; }
         private readonly ILogger _logger;
+        private Process _process;
+        private List<string> _processOutput;
 
         public InstrumenterTester(ILogger logger = null)
         {
@@ -68,14 +73,63 @@ namespace SG.CodeCoverage.Tests
                 Directory.Delete(dir, true);
         }
 
-        public void RunSomeCode()
+        public void RunApp(string args = null)
         {
             if (InstrumentedAssemblyPath == null)
                 throw new InvalidOperationException("Sample assembly is not instrumented.");
-            Assembly.LoadFrom(Path.Combine(OutputPath, "SG.CodeCoverage.Recorder.dll"));
-            var assembly = Assembly.LoadFrom(InstrumentedAssemblyPath);
-            var calc = assembly.DefinedTypes.Where(x => x.Name == nameof(PrimeCalculator)).FirstOrDefault();
-            var res = calc.GetMethod("IsPrime").Invoke(calc.DeclaredConstructors.First().Invoke(null), new object[] { 7 });
+            _process = Process.Start(new ProcessStartInfo()
+            {
+                FileName = InstrumentedAssemblyPath,
+                Arguments = args,
+                UseShellExecute = false,
+                WorkingDirectory = OutputPath,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true
+            });
+            _processOutput = new List<string>();
+            _process.OutputDataReceived += _process_OutputDataReceived;
+            _process.BeginOutputReadLine();
+            WaitForAppIdle();
+        }
+
+        private void _process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.Data))
+                return;
+            _processOutput.Add(e.Data);
+        }
+
+        private void WaitForAppIdle()
+        {
+            CheckAppStarted();
+            while (_processOutput.Count == 0 || _processOutput.Last() != "Enter command:")
+                Thread.Sleep(1);
+        }
+
+        public bool AppIsRunning
+            => _process != null && !_process.HasExited;
+
+        public void ExitApp()
+        {
+            CheckAppStarted();
+            _process.StandardInput.WriteLine("exit");
+            if (!_process.WaitForExit(10000))
+                throw new Exception("App did not exit withing 10 seconds.");
+            _process.WaitForExit();
+            _process = null;
+        }
+
+        public void RunIsPrimeInApp(int number)
+        {
+            CheckAppStarted();
+            _process.StandardInput.WriteLine("IsPrime " + number);
+            WaitForAppIdle();
+        }
+
+        private void CheckAppStarted()
+        {
+            if (_process == null)
+                throw new InvalidOperationException("Sample application is not started.");
         }
 
         public CoverageResult GetCoverageResult()

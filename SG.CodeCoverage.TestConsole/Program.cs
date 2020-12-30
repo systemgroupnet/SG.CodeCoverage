@@ -15,7 +15,8 @@ namespace SG.CodeCoverage.TestConsole
         {
             var tester = new InstrumenterTester();
             tester.InstrumentSampleProject();
-            tester.RunSomeCode();
+            tester.RunApp();
+            tester.RunIsPrimeInApp(7);
             var result = tester.GetCoverageResult();
             Console.WriteLine($"Visited {result.GetVisitedSources().Count()} source files" +
                 $" and {result.GetVisitedMethods().Count()} methods.");
