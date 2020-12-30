@@ -4,20 +4,22 @@ using SG.CodeCoverage.Metadata;
 
 namespace SG.CodeCoverage.Collection
 {
-    internal class SingleRecordingController : IRecordingController
+    internal class FixedPortRecordingController : IRecordingController
     {
         private readonly string _host;
         private readonly int _port;
         private readonly InstrumentationMap _map;
         private readonly ILogger _logger;
 
-        public SingleRecordingController(string host, int port, InstrumentationMap map, ILogger logger = null)
+        public FixedPortRecordingController(string host, int port, InstrumentationMap map, ILogger logger = null)
         {
             _host = host;
             _port = port;
             _map = map;
             _logger = logger ?? new ConsoleLogger();
         }
+
+        public InstrumentationMap InstrumentationMap => _map;
 
         public CoverageResult CollectResultAndReset()
         {

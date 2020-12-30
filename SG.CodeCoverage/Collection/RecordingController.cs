@@ -7,12 +7,12 @@ namespace SG.CodeCoverage.Collection
     {
         public static IRecordingController ForRuntimeConfigFile(string runtimeConfigFilePath, InstrumentationMap map, ILogger logger)
         {
-            return new MultiRecordingController(runtimeConfigFilePath, map, logger);
+            return new DynamicPortRecordingController(runtimeConfigFilePath, map, logger);
         }
 
         public static IRecordingController ForEndPoint(string host, int port, InstrumentationMap map, ILogger logger)
         {
-            return new SingleRecordingController(host, port, map, logger);
+            return new FixedPortRecordingController(host, port, map, logger);
         }
     }
 }

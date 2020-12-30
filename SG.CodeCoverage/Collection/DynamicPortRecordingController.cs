@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace SG.CodeCoverage.Collection
 {
-    internal class MultiRecordingController : IRecordingController
+    internal class DynamicPortRecordingController : IRecordingController
     {
         private readonly string _recorderRuntimeConfigFilePath;
         private readonly InstrumentationMap _map;
@@ -18,12 +18,14 @@ namespace SG.CodeCoverage.Collection
         private RuntimeConfig _currentRuntimeConfig;
         private const string _host = "localhost";
 
-        public MultiRecordingController(string recorderRuntimeConfigFilePath, InstrumentationMap map, ILogger logger = null)
+        public DynamicPortRecordingController(string recorderRuntimeConfigFilePath, InstrumentationMap map, ILogger logger = null)
         {
             _recorderRuntimeConfigFilePath = recorderRuntimeConfigFilePath;
             _map = map;
             _logger = logger ?? new ConsoleLogger();
         }
+
+        public InstrumentationMap InstrumentationMap => _map;
 
         public void ResetHits()
         {

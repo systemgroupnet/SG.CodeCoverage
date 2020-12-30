@@ -16,24 +16,9 @@ namespace SG.CodeCoverage.TestConsole
             var tester = new InstrumenterTester();
             tester.InstrumentSampleProject();
             tester.RunSomeCode();
-            var visitedFiles = tester.GetVisitedFiles();
-            Console.WriteLine(visitedFiles.Count);
-        }
-
-        static void InstrumentPath(string dir, string backupFolder, string filePattern)
-        {
-            var mapFilePath = Path.Combine(dir, "map.json");
-            var filesToInstrument = Directory
-                    .GetFiles(dir, filePattern)
-                    .ToList();
-            var options = new InstrumentationOptions(filesToInstrument, new[] { dir }, dir, 12398);
-            var instrumenter = new Instrumenter(options, mapFilePath, null)
-            {
-                BackupFolder = backupFolder,
-                RecorderLogFilePath = Path.Combine(dir, "CodeCoverageRecorderLog.txt")
-            };
-            Directory.CreateDirectory(instrumenter.BackupFolder);
-            var map = instrumenter.Instrument();
+            var result = tester.GetCoverageResult();
+            Console.WriteLine($"Visited {result.GetVisitedSources().Count()} source files" +
+                $" and {result.GetVisitedMethods().Count()} methods.");
         }
     }
 }

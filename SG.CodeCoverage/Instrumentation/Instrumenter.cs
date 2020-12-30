@@ -6,6 +6,7 @@ using SG.CodeCoverage.Common;
 using System.IO;
 using Newtonsoft.Json;
 using Mono.Cecil.Cil;
+using SG.CodeCoverage.Collection;
 using SG.CodeCoverage.Metadata;
 
 namespace SG.CodeCoverage.Instrumentation
@@ -53,7 +54,7 @@ namespace SG.CodeCoverage.Instrumentation
         {
         }
 
-        public InstrumentationMap Instrument()
+        public Collection.IRecordingController Instrument()
         {
             UniqueId = Guid.NewGuid();
 
@@ -65,7 +66,24 @@ namespace SG.CodeCoverage.Instrumentation
             if (!string.IsNullOrEmpty(OutputMapFilePath))
                 SaveMapFile(map, OutputMapFilePath);
 
-            return map;
+            return CreateRecordingController(map);
+        }
+
+        private IRecordingController CreateRecordingController(InstrumentationMap map)
+        {
+            if (Options.ControllerPortNumber > 0)
+            {
+                return new FixedPortRecordingController(
+                    "localhost", Options.ControllerPortNumber, map, _logger);
+            }
+            else
+            {
+                var dir = Options.RuntimeConfigOutputPath;
+                if (string.IsNullOrEmpty(dir))
+                    dir = Options.RecorderAssemblyCopyPath;
+                var fullPath = Path.Combine(dir, Options.RuntimeConfigOutputPath);
+                return new DynamicPortRecordingController(fullPath , map, _logger);
+            }
         }
 
         private InstrumentationMap InstrumentInternal()
