@@ -26,6 +26,7 @@ namespace SG.CodeCoverage.Tests.NetFx
         {
             _tester.RunApp();
             AssertVisitedFilesAndMethods(Files.Startup, Methods.Startup);
+            _tester.KillApp();
         }
 
         [TestMethod]
@@ -38,6 +39,7 @@ namespace SG.CodeCoverage.Tests.NetFx
                 Methods.Startup
                     .Concat(Methods.RunCommand)
                     .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2));
+            _tester.KillApp();
         }
 
         [TestMethod]
@@ -51,6 +53,7 @@ namespace SG.CodeCoverage.Tests.NetFx
                     .Concat(Methods.RunCommand)
                     .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2)
                     .Concat(Methods.PrimeCalculator.GetUpperBound));
+            _tester.KillApp();
         }
 
         [TestMethod]
@@ -66,6 +69,7 @@ namespace SG.CodeCoverage.Tests.NetFx
                     .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2)
                     .Concat(Methods.PrimeCalculator.GetUpperBound)
                     .Concat(Methods.SampleStruct));
+            _tester.KillApp();
         }
 
         [TestMethod]
@@ -80,6 +84,7 @@ namespace SG.CodeCoverage.Tests.NetFx
                 Methods.RunCommand
                     .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2)
                     .Append(Methods.get_Commands));
+            _tester.KillApp();
         }
 
         [TestMethod]

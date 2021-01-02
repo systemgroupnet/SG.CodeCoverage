@@ -113,8 +113,16 @@ namespace SG.CodeCoverage.Tests
         {
             CheckAppStarted();
             _process.StandardInput.WriteLine("exit");
-            if (!_process.WaitForExit(10000))
-                throw new Exception("App did not exit withing 10 seconds.");
+            if (!_process.WaitForExit(20000))
+                throw new Exception("App did not exit withing 20 seconds.");
+            _process.WaitForExit();
+            _process = null;
+        }
+
+        public void KillApp()
+        {
+            CheckAppStarted();
+            _process.Kill();
             _process.WaitForExit();
             _process = null;
         }
