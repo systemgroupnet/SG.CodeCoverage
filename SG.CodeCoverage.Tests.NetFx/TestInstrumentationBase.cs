@@ -9,15 +9,16 @@ using System.Threading.Tasks;
 
 namespace SG.CodeCoverage.Tests.NetFx
 {
-    [TestClass]
-    public class TestInstrumentation
+    public abstract class TestInstrumentationBase
     {
         InstrumenterTester _tester;
 
-        [TestInitialize]
-        public void Instrument()
+        public TestInstrumentationBase(int port)
         {
-            _tester = new InstrumenterTester();
+            _tester = new InstrumenterTester()
+            {
+                PortNumber = port
+            };
             _tester.InstrumentSampleProject();
         }
 

@@ -47,7 +47,9 @@
     <Compile Include="Coverage\CoverageResultTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InstrumenterTester.cs" />
-    <Compile Include="TestInstrumentation.cs" />
+    <Compile Include="TestInstrumentation_DynamicPort.cs" />
+    <Compile Include="TestInstrumentation_FixedPort.cs" />
+    <Compile Include="TestInstrumentationBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SampleProjectForTest\SampleProjectForTest.csproj">
