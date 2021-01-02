@@ -10,7 +10,7 @@ namespace SG.CodeCoverage.Common
 {
     public class VersionInfo : IComparable<VersionInfo>
     {
-        public const string CurrentVersionString = "1.0.0";
+        public const string CurrentVersionString = "1.1.0";
         public int Major { get; }
         public int Minor { get; }
         public int Patch { get; }
