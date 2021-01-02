@@ -126,17 +126,28 @@ namespace SG.CodeCoverage.Tests
             WaitForAppIdle();
         }
 
+        public CoverageResult GetCoverageResult()
+        {
+            CheckInstrumented();
+            return RecordingController.CollectResultAndReset();
+        }
+
+        public void ResetHits()
+        {
+            CheckInstrumented();
+            RecordingController.ResetHits();
+        }
+
+        private void CheckInstrumented()
+        {
+            if (InstrumentedAssemblyPath == null || RecordingController == null)
+                throw new InvalidOperationException("Sample assembly is not instrumented.");
+        }
+
         private void CheckAppStarted()
         {
             if (_process == null)
                 throw new InvalidOperationException("Sample application is not started.");
-        }
-
-        public CoverageResult GetCoverageResult()
-        {
-            if (InstrumentedAssemblyPath == null || RecordingController == null)
-                throw new InvalidOperationException("Sample assembly is not instrumented.");
-            return RecordingController.CollectResultAndReset();
         }
     }
 }

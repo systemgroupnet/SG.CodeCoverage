@@ -68,6 +68,37 @@ namespace SG.CodeCoverage.Tests.NetFx
                     .Concat(Methods.SampleStruct));
         }
 
+        [TestMethod]
+        public void Coverage_ResetHits_IsPrime2()
+        {
+            _tester.RunApp();
+            _tester.ResetHits();
+            _tester.RunIsPrimeInApp(2);
+            AssertVisitedFilesAndMethods(
+                new string[] { Files.App }
+                    .Append(Files.PrimeCalculator),
+                Methods.RunCommand
+                    .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2)
+                    .Append(Methods.get_Commands));
+        }
+
+        [TestMethod]
+        public void Coverage_ResetHits_IsPrime7()
+        {
+            _tester.RunApp();
+            _tester.ResetHits();
+            _tester.RunIsPrimeInApp(7);
+            AssertVisitedFilesAndMethods(
+                new string[] { Files.App }
+                    .Append(Files.PrimeCalculator)
+                    .Append(Files.SampleStruct),
+                Methods.RunCommand
+                    .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2)
+                    .Concat(Methods.PrimeCalculator.GetUpperBound)
+                    .Concat(Methods.SampleStruct)
+                    .Append(Methods.get_Commands));
+        }
+
 
         [TestCleanup]
         public void ExitApp()
@@ -90,12 +121,12 @@ namespace SG.CodeCoverage.Tests.NetFx
         private static void ShouldVisit(IReadOnlyList<string> expectedNames, IReadOnlyList<string> actualNames, string what)
         {
             Assert.AreEqual(expectedNames.Count, actualNames.Count, $"visited {what}s");
-            foreach(var expected in expectedNames)
+            foreach (var expected in expectedNames)
             {
                 bool found = false;
-                foreach(var actual in actualNames)
+                foreach (var actual in actualNames)
                 {
-                    if(actual.EndsWith(expected))
+                    if (actual.EndsWith(expected))
                     {
                         found = true;
                         break;
@@ -123,15 +154,18 @@ namespace SG.CodeCoverage.Tests.NetFx
 
         private static class Methods
         {
+            public static string get_Commands = "App::get_Commands()";
+
             public static readonly IEnumerable<string> Startup = new string[]
             {
                 "Program::Main(System.String[])",
                 "App::.ctor()",
-                "App::get_Commands()",
+                get_Commands,
                 "App::Run(System.String[])",
                 "Command::.ctor(System.String,System.String,System.Action`1<System.String>)",
                 "Command::get_Help()",
             };
+
 
             public static readonly IEnumerable<string> RunCommand = new string[]
             {
