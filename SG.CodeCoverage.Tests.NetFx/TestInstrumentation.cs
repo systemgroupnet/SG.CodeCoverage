@@ -34,7 +34,7 @@ namespace SG.CodeCoverage.Tests.NetFx
             _tester.RunApp("IsPrime 1");
             AssertVisitedFilesAndMethods(
                 Files.Startup
-                    .Concat(Files.PrimeCalculator),
+                    .Append(Files.PrimeCalculator),
                 Methods.Startup
                     .Concat(Methods.RunCommand)
                     .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2));
@@ -46,11 +46,26 @@ namespace SG.CodeCoverage.Tests.NetFx
             _tester.RunApp("IsPrime 4");
             AssertVisitedFilesAndMethods(
                 Files.Startup
-                    .Concat(Files.PrimeCalculator),
+                    .Append(Files.PrimeCalculator),
                 Methods.Startup
                     .Concat(Methods.RunCommand)
                     .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2)
                     .Concat(Methods.PrimeCalculator.GetUpperBound));
+        }
+
+        [TestMethod]
+        public void Coverage_IsPrime7()
+        {
+            _tester.RunApp("IsPrime 7");
+            AssertVisitedFilesAndMethods(
+                Files.Startup
+                    .Append(Files.PrimeCalculator)
+                    .Append(Files.SampleStruct),
+                Methods.Startup
+                    .Concat(Methods.RunCommand)
+                    .Concat(Methods.PrimeCalculator.IsPrimeAndIsLessThan2)
+                    .Concat(Methods.PrimeCalculator.GetUpperBound)
+                    .Concat(Methods.SampleStruct));
         }
 
 
@@ -93,21 +108,17 @@ namespace SG.CodeCoverage.Tests.NetFx
 
         private static class Files
         {
+            public static readonly string App = "App.cs";
+            public static readonly string Program = "Program.cs";
+
             public static readonly IEnumerable<string> Startup = new string[]
             {
-                "App.cs",
-                "Program.cs"
+                App,
+                Program
             };
 
-            public static readonly IEnumerable<string> PrimeCalculator = new string[]
-            {
-                "PrimeCalculator.cs"
-            };
-
-            public static readonly IEnumerable<string> SampleStruct = new string[]
-            {
-                "SampleStruct.cs"
-            };
+            public static readonly string PrimeCalculator = "PrimeCalculator.cs";
+            public static readonly string SampleStruct = "SampleStruct.cs";
         }
 
         private static class Methods
@@ -147,6 +158,13 @@ namespace SG.CodeCoverage.Tests.NetFx
                 public static IEnumerable<string> IsPrimeAndIsLessThan2
                     => IsPrime.Concat(IsLessThan2);
             }
+
+            public static readonly IEnumerable<string> SampleStruct = new string[]
+            {
+                "SampleStruct::.ctor(System.Int32)",
+                "SampleStruct::get_Value()",
+                "SampleStruct::Multiply(System.Int32)"
+            };
         }
     }
 }
