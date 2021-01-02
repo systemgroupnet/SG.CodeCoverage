@@ -81,7 +81,7 @@ namespace SG.CodeCoverage.Instrumentation
                 var dir = Options.RuntimeConfigOutputPath;
                 if (string.IsNullOrEmpty(dir))
                     dir = Options.RecorderAssemblyCopyPath;
-                var fullPath = Path.Combine(dir, Options.RuntimeConfigOutputPath);
+                var fullPath = Path.Combine(dir, Options.RuntimeConfigFileName);
                 return new DynamicPortRecordingController(fullPath , map, _logger);
             }
         }
