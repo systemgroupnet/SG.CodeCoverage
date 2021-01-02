@@ -80,7 +80,7 @@ namespace SG.CodeCoverage.Recorder.RecordingController
             var toDelete = new List<RunningProcess>();
             var runningProcessIDs = new HashSet<int>(Process.GetProcesses().Select(p => p.Id));
 
-            Processes.RemoveAll(p => runningProcessIDs.Contains(p.ID));
+            Processes.RemoveAll(p => !runningProcessIDs.Contains(p.ID));
         }
 
         private static void ThrowInvalidFormat()
