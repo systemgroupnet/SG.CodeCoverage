@@ -14,7 +14,7 @@ The `AddHit(int, int)` method resides in the `SG.CodeCoverage.Recorder` project,
 3. After running each test, you can call `RecorderControllerClient.SaveHitsAndReset(string outputPath)`. This will send a request to server to save the visited types and methods as a binary file like `hits.test1.bin`, then resets the counter.
 4. After collecting test hits, you can find the visited files by merging the `json` map file and the binary hit file. This can be easily done using `DataCollector.GetVisitedFiles` method which does this task.
 
-## Conclusion
-This is not exactly a sequence diagram, but helps you get the idea:
+## Summary
+This is not exactly a sequence diagram, but helps you get the idea, And as they say, "a picture worth a thousand words":
 
-![summery](./summery.png)
+![summary](./summary.png)
