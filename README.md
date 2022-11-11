@@ -17,4 +17,4 @@ The `AddHit(int, int)` method resides in the `SG.CodeCoverage.Recorder` project,
 ## Summary
 This is not exactly a sequence diagram, but helps you get the idea, And as they say, "a picture worth a thousand words":
 
-![summary](./summary.png)
+![summary](./summary.jpg)
