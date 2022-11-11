@@ -15,6 +15,6 @@ The `AddHit(int, int)` method resides in the `SG.CodeCoverage.Recorder` project,
 4. After collecting test hits, you can find the visited files by merging the `json` map file and the binary hit file. This can be easily done using `DataCollector.GetVisitedFiles` method which does this task.
 
 ## Summary
-This is not exactly a sequence diagram, but helps you get the idea, And as they say, "a picture worth a thousand words":
+This is not exactly a sequence diagram, but helps you get the idea, and as they say: "a picture worth a thousand words":
 
 ![summary](./summary.jpg)
